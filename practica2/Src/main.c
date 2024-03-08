@@ -27,7 +27,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define DELAY_DURATION_MS 100
+#define DELAY_DURATION_100_MS 100
+#define DELAY_DURATION_200_MS 200
+#define DELAY_DURATION_1000_MS 1000
+#define TOGGLE_TIMES_MAX 5
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -35,6 +38,8 @@
 static Led_TypeDef leds_available[] = {LED1, LED2, LED3};
 static uint32_t leds_max = sizeof(leds_available)/sizeof(Led_TypeDef);
 static delay_t delay;
+static tick_t delay_periods[] = {DELAY_DURATION_100_MS, DELAY_DURATION_200_MS, DELAY_DURATION_1000_MS};
+static uint32_t delay_periods_max = sizeof(delay_periods)/sizeof(tick_t);
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -51,6 +56,8 @@ static void Init_LEDs(void);
  */
 int main(void)
 {
+	uint32_t toggle_times = 0;
+	uint32_t delay_period = 0;
 	/* STM32F4xx HAL library initialization:
        - Configure the Flash prefetch
        - Systick timer is configured by default as source of time base, but user 
@@ -68,7 +75,7 @@ int main(void)
 
 	Init_LEDs();
 
-	delayInit(&delay, DELAY_DURATION_MS);
+	delayInit(&delay, delay_periods[delay_period]);
 
 	/* Infinite loop */
 	while (1)
@@ -78,6 +85,18 @@ int main(void)
 			for (int i = 0; i < leds_max; i++)
 			{
 				BSP_LED_Toggle(leds_available[i]);
+			}
+
+			toggle_times++;
+			if (toggle_times == TOGGLE_TIMES_MAX)
+			{
+				toggle_times = 0;
+				delay_period++;
+				if (delay_period == delay_periods_max)
+				{
+					delay_period = 0;
+				}
+				delayWrite(&delay, delay_periods[delay_period]);
 			}
 		}
 	}
