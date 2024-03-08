@@ -30,7 +30,7 @@
 #define DELAY_DURATION_100_MS 100
 #define DELAY_DURATION_200_MS 200
 #define DELAY_DURATION_1000_MS 1000
-#define TOGGLE_TIMES_MAX 5
+#define TOGGLE_TIMES_MAX 10
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
