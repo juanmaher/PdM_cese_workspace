@@ -1,0 +1,7 @@
+../Src/main.c:52:5:main	3
+../Src/main.c:86:6:delayInit	2
+../Src/main.c:98:8:delayRead	4
+../Src/main.c:121:6:delayWrite	2
+../Src/main.c:131:13:Init_LEDs	2
+../Src/main.c:139:13:SystemClock_Config	4
+../Src/main.c:191:13:Error_Handler	1
