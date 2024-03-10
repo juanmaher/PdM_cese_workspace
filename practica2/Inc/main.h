@@ -61,18 +61,18 @@ typedef struct {
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 /**
- * @brief Initialize the delay
+ * @brief Initializes the delay
  */
 void delayInit(delay_t * delay, tick_t duration);
 
 /**
- * @brief Read if the time has consumed and starts the timer if it wasn't running.
+ * @brief Reads if the time has consumed and starts the timer if it wasn't running.
  * @return param bool_t TRUE if the time has consumed and FALSE if it hasn't.
  */
 bool_t delayRead(delay_t * delay );
 
 /**
- * @brief Set the duration of the delay
+ * @brief Sets the duration of the delay
  */
 void delayWrite(delay_t * delay, tick_t duration);
 
