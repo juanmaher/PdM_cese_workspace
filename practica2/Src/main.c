@@ -119,6 +119,7 @@ bool_t delayRead(delay_t * delay)
 	if (delay == NULL)
 	{
 		Error_Handler();
+		return false;
 	}
 
 	if (delay->running == false)
@@ -128,7 +129,7 @@ bool_t delayRead(delay_t * delay)
 		return false;
 	}
 
-	if (HAL_GetTick() - delay->startTime > delay->duration)
+	if (HAL_GetTick() - delay->startTime >= delay->duration)
 	{
 		delay->running = false;
 		return true;
