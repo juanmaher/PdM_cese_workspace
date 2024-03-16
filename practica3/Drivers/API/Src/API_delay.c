@@ -23,8 +23,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define MAX_LED_SEQ 2
-#define DELAY_TIME_MS 200
+#define DEFAULT_START_TIME 0
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -55,7 +54,7 @@ void delayInit(delay_t * delay, tick_t duration)
 	}
 
 	delay->running = false;
-	delay->startTime = 0;
+	delay->startTime = DEFAULT_START_TIME;
 	delay->duration = duration;
 }
 
