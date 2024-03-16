@@ -42,20 +42,25 @@ typedef struct {
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 /**
- * @brief Initializes the delay
+ * @brief Initializes the delay structure.
+ * @param delay Pointer to the delay structure to be initialized.
+ * @param duration Duration of the delay in ticks.
  */
-void delayInit(delay_t * delay, tick_t duration);
+void delayInit(delay_t *delay, tick_t duration);
 
 /**
- * @brief Reads if the time has consumed and starts the timer if it wasn't running.
- * @return param bool_t TRUE if the time has consumed and FALSE if it hasn't.
+ * @brief Checks if the delay time has elapsed and starts the timer if it wasn't running.
+ * @param delay Pointer to the delay structure.
+ * @retval TRUE if the time has elapsed, FALSE if it hasn't.
  */
-bool_t delayRead(delay_t * delay);
+bool_t delayRead(delay_t *delay);
 
 /**
- * @brief Sets the duration of the delay
+ * @brief Sets the duration of the delay.
+ * @param delay Pointer to the delay structure.
+ * @param duration Duration of the delay in ticks.
  */
-void delayWrite(delay_t * delay, tick_t duration);
+void delayWrite(delay_t *delay, tick_t duration);
 
 #endif /* __API_DELAY_H */
 
