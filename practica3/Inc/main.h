@@ -23,21 +23,11 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include "API_delay.h"
 #include "stm32f4xx_hal.h"  		/* <- HAL include */
 #include "stm32f4xx_nucleo_144.h" 	/* <- BSP include */
 
 /* Exported types ------------------------------------------------------------*/
-typedef uint32_t tick_t;
-typedef bool bool_t;
-
-typedef struct {
-   tick_t startTime;
-   tick_t duration;
-   bool_t running;
-} delay_t;
-
 /* Exported constants --------------------------------------------------------*/
 /* User can use this section to tailor USARTx/UARTx instance used and associated
    resources */
@@ -60,21 +50,6 @@ typedef struct {
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-/**
- * @brief Initializes the delay
- */
-void delayInit(delay_t * delay, tick_t duration);
-
-/**
- * @brief Reads if the time has consumed and starts the timer if it wasn't running.
- * @return param bool_t TRUE if the time has consumed and FALSE if it hasn't.
- */
-bool_t delayRead(delay_t * delay );
-
-/**
- * @brief Sets the duration of the delay
- */
-void delayWrite(delay_t * delay, tick_t duration);
 
 #endif /* __MAIN_H */
 

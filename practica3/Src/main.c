@@ -27,11 +27,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define DELAY_DURATION_100_MS 100
 #define DELAY_DURATION_200_MS 200
-#define DELAY_DURATION_1000_MS 1000
-#define TOGGLE_TIMES_MAX 10
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
@@ -54,8 +50,6 @@ static void Init_LEDs(void);
  */
 int main(void)
 {
-	uint32_t toggle_times = 0;
-	uint32_t delay_period = 0;
 	/* STM32F4xx HAL library initialization:
        - Configure the Flash prefetch
        - Systick timer is configured by default as source of time base, but user 
@@ -73,7 +67,7 @@ int main(void)
 
 	Init_LEDs();
 
-	delayInit(&delay, delay_periods[delay_period]);
+	delayInit(&delay, DELAY_DURATION_200_MS);
 
 	/* Infinite loop */
 	while (1)
@@ -84,66 +78,8 @@ int main(void)
 			{
 				BSP_LED_Toggle(leds_available[i]);
 			}
-
-			toggle_times++;
-			if (toggle_times == TOGGLE_TIMES_MAX)
-			{
-				toggle_times = 0;
-				delay_period++;
-				if (delay_period == delay_periods_max)
-				{
-					delay_period = 0;
-				}
-				delayWrite(&delay, delay_periods[delay_period]);
-			}
 		}
 	}
-}
-
-void delayInit(delay_t * delay, tick_t duration)
-{
-	if (delay == NULL)
-	{
-		Error_Handler();
-	}
-
-	delay->running = false;
-	delay->startTime = 0;
-	delay->duration = duration;
-}
-
-bool_t delayRead(delay_t * delay)
-{
-	if (delay == NULL)
-	{
-		Error_Handler();
-		return false;
-	}
-
-	if (delay->running == false)
-	{
-		delay->running = true;
-		delay->startTime = (tick_t) HAL_GetTick();
-		return false;
-	}
-
-	if (HAL_GetTick() - delay->startTime >= delay->duration)
-	{
-		delay->running = false;
-		return true;
-	}
-		
-	return false;
-}
-
-void delayWrite(delay_t * delay, tick_t duration)
-{
-	if (delay == NULL)
-	{
-		Error_Handler();
-	}
-
-	delay->duration = duration;
 }
 
 static void Init_LEDs()
