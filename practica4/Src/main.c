@@ -1,58 +1,37 @@
 /**
  ******************************************************************************
- * @file    UART/UART_Printf/Src/main.c
- * @author  MCD Application Team
- * @brief   This example shows how to retarget the C library printf function
- *          to the UART.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may not use this file except in compliance with the
- * License. You may obtain a copy of the License at:
- *                        opensource.org/licenses/BSD-3-Clause
- *
+ * @file    Src/main.c
+ * @author  Juan Manuel Hernández
+ * @brief   Main program body
  ******************************************************************************
  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32F4xx_HAL_Examples
- * @{
- */
-
 /* Private typedef -----------------------------------------------------------*/
-
 typedef enum {
-    BUTTON_UP, // El botón está libre
-    BUTTON_FALLING, // Está ocurriendo el flanco descendente
-    BUTTON_RISING, // Está ocurriendo el flanco ascendente
-    BUTTON_DOWN // El botón está presionado
+    BUTTON_UP, // Button released
+    BUTTON_FALLING, // Decreasing edge
+    BUTTON_RISING, // Increasing edge
+    BUTTON_DOWN // Button pushed
 } debounceState_t;
 
 /* Private define ------------------------------------------------------------*/
-
 #define DELAY_DURATION_MS 40
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
 static delay_t delay;
 static debounceState_t debounceState;
 
 /* Private function prototypes -----------------------------------------------*/
-
 static void SystemClock_Config(void);
 static void Error_Handler(void);
-static void debounceFSM_init();		// debe cargar el estado inicial
-static void debounceFSM_update();	// debe leer las entradas, resolver la lógica de
-					// transición de estados y actualizar las salidas
-static void buttonPressed();			// debe encender el LED
-static void buttonReleased();		// debe apagar el LED
+static void debounceFSM_init();
+static void debounceFSM_update();
+static void buttonPressed();
+static void buttonReleased();
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -110,18 +89,26 @@ static void buttonReleased()
 	BSP_LED_Off(LED1);
 }
 
+/**
+ * @brief Initialize the debounce FSM
+ * @return void
+*/
 static void debounceFSM_init()
 {
 	debounceState = BUTTON_UP;
+    delayInit(&delay, DELAY_DURATION_MS);
 }
 
+/**
+ * @brief Return button state
+ * @return bool_t TRUE o FALSE depending on the button state
+*/
 static void debounceFSM_update()
 {
 	switch (debounceState) {
 		case BUTTON_UP:
 			if (BSP_PB_GetState(BUTTON_USER)) {
 				debounceState = BUTTON_RISING;
-				delayInit(&delay, DELAY_DURATION_MS);
 			}
 			break;
 		case BUTTON_FALLING:
@@ -149,7 +136,6 @@ static void debounceFSM_update()
 		case BUTTON_DOWN:
 			if (!BSP_PB_GetState(BUTTON_USER)) {
 				debounceState = BUTTON_FALLING;
-				delayInit(&delay, DELAY_DURATION_MS);
 			}
 			break;
 		default:
