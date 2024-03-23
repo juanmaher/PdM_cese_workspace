@@ -51,7 +51,6 @@ void debounceFSM_update()
 					buttonState = true;
 				} else {
 					debounceState = BUTTON_UP;
-					buttonState = false;
 				}
 			}
 			break;
@@ -59,7 +58,6 @@ void debounceFSM_update()
 			if (delayRead(&delay)) {
 				if (BSP_PB_GetState(BUTTON_USER)) {
 					debounceState = BUTTON_DOWN;
-					buttonState = true;
 				} else {
 					debounceState = BUTTON_UP;
 					buttonState = false;

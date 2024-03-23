@@ -118,7 +118,6 @@ static void debounceFSM_update()
 					buttonPressed();
 				} else {
 					debounceState = BUTTON_UP;
-					buttonReleased();
 				}
 			}
 			break;
@@ -126,7 +125,6 @@ static void debounceFSM_update()
 			if (delayRead(&delay)) {
 				if (BSP_PB_GetState(BUTTON_USER)) {
 					debounceState = BUTTON_DOWN;
-					buttonPressed();
 				} else {
 					debounceState = BUTTON_UP;
 					buttonReleased();
