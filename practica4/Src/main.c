@@ -108,7 +108,7 @@ static void debounceFSM_update()
 	switch (debounceState) {
 		case BUTTON_UP:
 			if (BSP_PB_GetState(BUTTON_USER)) {
-				debounceState = BUTTON_RISING;
+				debounceState = BUTTON_FALLING;
 			}
 			break;
 		case BUTTON_FALLING:
@@ -118,6 +118,7 @@ static void debounceFSM_update()
 					buttonPressed();
 				} else {
 					debounceState = BUTTON_UP;
+
 				}
 			}
 			break;
@@ -133,7 +134,7 @@ static void debounceFSM_update()
 			break;
 		case BUTTON_DOWN:
 			if (!BSP_PB_GetState(BUTTON_USER)) {
-				debounceState = BUTTON_FALLING;
+				debounceState = BUTTON_RISING;
 			}
 			break;
 		default:
