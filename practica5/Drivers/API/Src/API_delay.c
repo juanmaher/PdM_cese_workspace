@@ -36,7 +36,7 @@ static void Error_Handler(void)
 /* Public functions ---------------------------------------------------------*/
 void delayInit(delay_t * delay, tick_t duration)
 {
-	if (delay == NULL)
+	if (delay == NULL || duration == 0)
 	{
 		Error_Handler();
 	}
@@ -72,7 +72,7 @@ bool_t delayRead(delay_t * delay)
 
 void delayWrite(delay_t * delay, tick_t duration)
 {
-	if (delay == NULL)
+	if (delay == NULL || duration == 0)
 	{
 		Error_Handler();
 	}

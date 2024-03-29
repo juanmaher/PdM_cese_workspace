@@ -37,7 +37,6 @@ void debounceFSM_init()
 	debounceState = BUTTON_UP;
 	buttonState = false;
 	delayInit(&delay, DELAY_DURATION_MS);
-
 }
 
 void debounceFSM_update()
