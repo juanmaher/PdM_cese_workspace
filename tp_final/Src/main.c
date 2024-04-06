@@ -21,6 +21,22 @@ static void SystemClock_Config(void);
 static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
+void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, uint8_t width)
+{
+	switch(event_type) {
+		case EVENT_RX_DR:
+			//HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+			break;
+		case EVENT_TX_DS:
+			//HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+			break;
+		case EVENT_MAX_RT:
+			break;
+		case EVENT_GPIO_IRQ:
+			break;
+	}
+}
+
 /**
  * @brief  Main program
  * @param  None
@@ -48,7 +64,7 @@ int main(void)
 	hnrf24.Init->RfChannel = 0b00000010;
 	/* RF_SETUP */
 	hnrf24.Init->ContWave = 0;
-	hnrf24.Init->RfPower = RF_PWR_0DBM;
+	hnrf24.Init->RfPower = RF_POWER_0DBM;
 	hnrf24.Init->RfDataRate = RF_DR_2MBPS;
 	/* DPL */
 	hnrf24.Init->DplEnable = 1;

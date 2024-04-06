@@ -16,7 +16,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Public functions ----------------------------------------------------------*/
-bool_t SPI_Init(struct SPI_HandleTypeDef *hspi)
+bool_t SPI_Init(SPI_HandleTypeDef *hspi)
 {
     hspi->Init.Mode = SPI_MODE_MASTER;
     hspi->Init.Direction = SPI_DIRECTION_2LINES;
@@ -32,19 +32,17 @@ bool_t SPI_Init(struct SPI_HandleTypeDef *hspi)
     return true;
 }
 
-bool_t SPI_TransmitData(struct SPI_HandleTypeDef *hspi, uint8_t * pTxBuffer, uint16_t size)
+bool_t SPI_TransmitData(SPI_HandleTypeDef *hspi, uint8_t * pTxBuffer, uint16_t size)
 {
     return true;
 }
 
-bool_t SPI_ReceiveData(struct SPI_HandleTypeDef *hspi, uint8_t * pRxBuffer, uint16_t size);
+bool_t SPI_ReceiveData(SPI_HandleTypeDef *hspi, uint8_t * pRxBuffer, uint16_t size)
 {
-
     return true;
 }
 
-bool_t SPI_DeInit(struct SPI_HandleTypeDef *hspi);
+bool_t SPI_DeInit(SPI_HandleTypeDef *hspi)
 {
-
     return true;
 }

@@ -43,7 +43,7 @@ typedef enum {
     RF_DR_1MBPS = 0x0,
     RF_DR_2MBPS = 0x8,
     RF_DR_250KBPS = 0x20
-} nRF24_RfPower_t;
+} nRF24_RfDataRate_t;
 
 typedef enum {
     CRC_ENCODING_1_BYTE,
@@ -56,21 +56,6 @@ typedef enum {
     AW_5_BYTES
 } nRF24_Aw_t;
 
-// typedef struct {
-//     GPIO_TypeDef * port;
-//     uint16_t pin;
-// } nRF24_Cs_t;
-
-// typedef struct {
-//     GPIO_TypeDef * port;
-//     uint16_t pin;
-// } nRF24_Ce_t;
-
-// typedef struct {
-//     GPIO_TypeDef * port;
-//     uint16_t pin;
-// } nRF24_Irq_t;
-
 typedef enum {
     TRANSMITTION_DONE,
     TRANSMITTION_IN_PROGRESS,
@@ -82,6 +67,13 @@ typedef enum {
     TRANSMITTER_MODE,
     RECEIVER_MODE
 } nRF24_Mode_t;
+
+typedef enum {
+    EVENT_MAX_RT=4,
+    EVENT_TX_DS,
+    EVENT_RX_DR,
+	EVENT_GPIO_IRQ,
+} nRF24_IRQ_EVENT;
 
 typedef struct __nRF24_InitTypeDef {
     /* CONFIG */
@@ -105,7 +97,7 @@ typedef struct __nRF24_InitTypeDef {
     /* RF_SETUP */
     uint8_t ContWave;
     nRF24_RfPower_t RfPower;
-    nRF24_RfPower_t RfDataRate;
+    nRF24_RfDataRate_t RfDataRate;
 
     /* DPL */
     uint8_t DplEnable;
@@ -113,11 +105,6 @@ typedef struct __nRF24_InitTypeDef {
 
     /* EN_DYN_ACK */
     uint8_t DynAckEnable;
-
-    /* GPIO configuration */
-    //nRF24_Cs_t cs;
-    //nRF24_Ce_t ce;
-    //nRF24_Irq_t irq;
 } nRF24_InitTypeDef;
 
 typedef struct __nRF24_HandleTypeDef {
@@ -143,7 +130,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define CRCO                    (1 << 2)
 #define PWR_UP                  (1 << 1)
 #define PRIM_RX                 (1 << 0)
-#define CONFIG_DFT_VALUE        { EN_CRC }
+// #define CONFIG_DFT_VALUE        ( EN_CRC )
 
 #define EN_AA                   0x01
 #define ENAA_P5                 (1 << 5)
@@ -152,7 +139,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define ENAA_P2                 (1 << 2)
 #define ENAA_P1                 (1 << 1)
 #define ENAA_P0                 (1 << 0)
-#define EN_AA_DFT_VALUE         { ENAA_P5 | ENAA_P4 | ENAA_P3 | ENAA_P2 | ENAA_P1 | ENAA_P0 }
+// #define EN_AA_DFT_VALUE         ( ENAA_P5 | ENAA_P4 | ENAA_P3 | ENAA_P2 | ENAA_P1 | ENAA_P0 )
 
 #define EN_RXADDR               0x02
 #define ERX_P5                  (1 << 5)
@@ -161,12 +148,12 @@ typedef struct __nRF24_HandleTypeDef {
 #define ERX_P2                  (1 << 2)
 #define ERX_P1                  (1 << 1)
 #define ERX_P0                  (1 << 0)
-#define EN_RXADDR_DFT_VALUE     { ERX_P1 | ERX_P0 }
+// #define EN_RXADDR_DFT_VALUE     ( ERX_P1 | ERX_P0 )
 
 #define SETUP_AW                0x03
 #define AW_1                    (1 << 1)
 #define AW_0                    (1 << 0)
-#define SETUP_AW_DFT_VALUE      { AW_1 | AW_0 }
+// #define SETUP_AW_DFT_VALUE      ( AW_1 | AW_0 )
 
 #define SETUP_RETR              0x04
 #define ARD_7                   (1 << 7)
@@ -177,7 +164,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define ARC_2                   (1 << 2)
 #define ARC_1                   (1 << 1)
 #define ARC_0                   (1 << 0)
-#define SETUP_RETR_DFT_VALUE    { ARC_1 | ARC_0 }
+// #define SETUP_RETR_DFT_VALUE    ( ARC_1 | ARC_0 )
 
 #define RF_CH                   0x05
 #define RF_CH_6                 (1 << 6)
@@ -187,7 +174,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RF_CH_2                 (1 << 2)
 #define RF_CH_1                 (1 << 1)
 #define RF_CH_0                 (1 << 0)
-#define RF_CH_DFT_VALUE         { RF_CH_1 }
+// #define RF_CH_DFT_VALUE         ( RF_CH_1 )
 
 #define RF_SETUP                0x06
 #define CONT_WAVE               (1 << 7)
@@ -196,7 +183,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RF_DR_HIGH              (1 << 3)
 #define RF_PWR_2                (1 << 2)
 #define RF_PWR_1                (1 << 1)
-#define RF_SETUP_DFT_VALUE      { RF_DR_HIGH | RF_PWR_2 | RF_PWR_1 }
+// #define RF_SETUP_DFT_VALUE      ( RF_DR_HIGH | RF_PWR_2 | RF_PWR_1 )
 
 #define STATUS                  0x07
 #define RX_DR                   (1 << 6)
@@ -205,8 +192,8 @@ typedef struct __nRF24_HandleTypeDef {
 #define RX_P_NO_3               (1 << 3)
 #define RX_P_NO_2               (1 << 2)
 #define RX_P_NO_1               (1 << 1)
-#define TX_FULL                 (1 << 0)
-#define STATUS_DFT_VALUE        { RX_P_NO_3 | RX_P_NO_2 | RX_P_NO_1 }
+#define TX_FIFO_FULL            (1 << 0)
+// #define STATUS_DFT_VALUE        ( RX_P_NO_3 | RX_P_NO_2 | RX_P_NO_1 )
 
 #define OBSERVE_TX              0x08
 #define PLOS_CNT_7              (1 << 7)
@@ -217,27 +204,27 @@ typedef struct __nRF24_HandleTypeDef {
 #define ARC_CNT_2               (1 << 2)
 #define ARC_CNT_1               (1 << 1)
 #define ARC_CNT_0               (1 << 0)
-#define OBSERVE_TX_DFT_VALUE    { 0x00U }
+// #define OBSERVE_TX_DFT_VALUE    ( 0x00U )
 
 #define RPD                     0x09
 #define RPD_0                   (1 << 0)
-#define RPD_DFT_VALUE           { 0x00U }
+// #define RPD_DFT_VALUE           ( 0x00U )
 
 #define RX_ADDR_P0              0x0A
-#define RX_ADDR_PO_DFT_VALUE    { 0xE7E7E7E7E7 }
+// #define RX_ADDR_PO_DFT_VALUE    ( 0xE7E7E7E7E7 )
 #define RX_ADDR_P1              0x0B
-#define RX_ADDR_P1_DFT_VALUE    { 0xC2C2C2C2C2 }
+// #define RX_ADDR_P1_DFT_VALUE    ( 0xC2C2C2C2C2 )
 #define RX_ADDR_P2              0x0C
-#define RX_ADDR_P2_DFT_VALUE    { 0xC3 }
+// #define RX_ADDR_P2_DFT_VALUE    ( 0xC3 )
 #define RX_ADDR_P3              0x0D
-#define RX_ADDR_P3_DFT_VALUE    { 0xC4 }
+// #define RX_ADDR_P3_DFT_VALUE    ( 0xC4 )
 #define RX_ADDR_P4              0x0E
-#define RX_ADDR_P4_DFT_VALUE    { 0xC5 }
+// #define RX_ADDR_P4_DFT_VALUE    ( 0xC5 )
 #define RX_ADDR_P5              0x0F
-#define RX_ADDR_P5_DFT_VALUE    { 0xC6 }
+// #define RX_ADDR_P5_DFT_VALUE    ( 0xC6 )
 
 #define TX_ADDR                 0x10
-#define TX_ADDR_DFT_VALUE       { 0xE7E7E7E7E7 }
+// #define TX_ADDR_DFT_VALUE       ( 0xE7E7E7E7E7 )
 
 #define RX_PW_P0                0x11
 #define RX_PW_P0_5              (1 << 5)
@@ -246,7 +233,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RX_PW_P0_2              (1 << 2)
 #define RX_PW_P0_1              (1 << 1)
 #define RX_PW_P0_0              (1 << 0)
-#define RX_PW_P0_DFT_VALUE      { 0x00U }
+// #define RX_PW_P0_DFT_VALUE      ( 0x00U )
 
 #define RX_PW_P1                0x12
 #define RX_PW_P1_5              (1 << 5)
@@ -255,7 +242,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RX_PW_P1_2              (1 << 2)
 #define RX_PW_P1_1              (1 << 1)
 #define RX_PW_P1_0              (1 << 0)
-#define RX_PW_P1_DFT_VALUE      { 0x00U }
+// #define RX_PW_P1_DFT_VALUE      ( 0x00U )
 
 #define RX_PW_P2                0x13
 #define RX_PW_P2_5              (1 << 5)
@@ -264,7 +251,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RX_PW_P2_2              (1 << 2)
 #define RX_PW_P2_1              (1 << 1)
 #define RX_PW_P2_0              (1 << 0)
-#define RX_PW_P2_DFT_VALUE      { 0x00U }
+// #define RX_PW_P2_DFT_VALUE      ( 0x00U )
 
 #define RX_PW_P3                0x14
 #define RX_PW_P3_5              (1 << 5)
@@ -273,7 +260,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RX_PW_P3_2              (1 << 2)
 #define RX_PW_P3_1              (1 << 1)
 #define RX_PW_P3_0              (1 << 0)
-#define RX_PW_P3_DFT_VALUE      { 0x00U }
+// #define RX_PW_P3_DFT_VALUE      ( 0x00U )
 
 #define RX_PW_P4                0x15
 #define RX_PW_P4_5              (1 << 5)
@@ -282,7 +269,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RX_PW_P4_2              (1 << 2)
 #define RX_PW_P4_1              (1 << 1)
 #define RX_PW_P4_0              (1 << 0)
-#define RX_PW_P4_DFT_VALUE      { 0x00U }
+// #define RX_PW_P4_DFT_VALUE      ( 0x00U )
 
 #define RX_PW_P5                0x16
 #define RX_PW_P5_5              (1 << 5)
@@ -291,7 +278,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define RX_PW_P5_2              (1 << 2)
 #define RX_PW_P5_1              (1 << 1)
 #define RX_PW_P5_0              (1 << 0)
-#define RX_PW_P5_DFT_VALUE      { 0x00U }
+// #define RX_PW_P5_DFT_VALUE      ( 0x00U )
 
 #define FIFO_STATUS             0x17
 #define TX_REUSE                (1 << 6)
@@ -299,7 +286,7 @@ typedef struct __nRF24_HandleTypeDef {
 #define TX_EMPTY                (1 << 4)
 #define RX_FULL                 (1 << 1)
 #define RX_EMPTY                (1 << 0)
-#define FIFO_STATUS_DFT_VALUE   { TX_EMPTY | RX_EMPTY }
+// #define FIFO_STATUS_DFT_VALUE   ( TX_EMPTY | RX_EMPTY )
 
 #define DYNPD                   0x1C
 #define DPL_P5                  (1 << 5)
@@ -308,13 +295,13 @@ typedef struct __nRF24_HandleTypeDef {
 #define DPL_P2                  (1 << 2)
 #define DPL_P1                  (1 << 1)
 #define DPL_P0                  (1 << 0)
-#define DYNPD_DFT_VALUE         { 0x00U }
+// #define DYNPD_DFT_VALUE         ( 0x00U )
 
 #define FEATURE                 0x1D
 #define EN_DPL                  (1 << 2)
 #define EN_ACK_PAY              (1 << 1)
 #define EN_DYN_ACK              (1 << 0)
-#define FEATURE_DFT_VALUE       { 0x00U }
+// #define FEATURE_DFT_VALUE       ( 0x00U )
 
 /* Commands definition */
 #define R_REGISTER              0b00000000
@@ -349,7 +336,7 @@ typedef struct __nRF24_HandleTypeDef {
    on accurate values, they just guarantee that the application will not remain
    stuck if the SPI communication is corrupted.
    You may modify these timeout values depending on CPU frequency and application
-   conditions (interrupts routines ...). */   
+   conditions (interrupts routines ...). */
 #define SPIx_TIMEOUT_MAX                   1000
 
 #define SPIx_CS_GPIO_PORT                        GPIOD
@@ -357,8 +344,8 @@ typedef struct __nRF24_HandleTypeDef {
 #define SPIx_CS_GPIO_CLK_ENABLE()                __HAL_RCC_GPIOD_CLK_ENABLE()
 #define SPIx_CS_GPIO_CLK_DISABLE()               __HAL_RCC_GPIOD_CLK_DISABLE()
 
-#define SPIx__CS_LOW()          HAL_GPIO_WritePin(SPIx_CS_GPIO_PORT, SPIx_CS_PIN, GPIO_PIN_RESET)
-#define SPIx__CS_HIGH()         HAL_GPIO_WritePin(SPIx_CS_GPIO_PORT, SPIx_CS_PIN, GPIO_PIN_SET)
+#define SPIx_CS_LOW()          HAL_GPIO_WritePin(SPIx_CS_GPIO_PORT, SPIx_CS_PIN, GPIO_PIN_RESET)
+#define SPIx_CS_HIGH()         HAL_GPIO_WritePin(SPIx_CS_GPIO_PORT, SPIx_CS_PIN, GPIO_PIN_SET)
 
 /**
   * @brief  nRF24 Control Interface pins (shield D4)
@@ -379,5 +366,31 @@ typedef struct __nRF24_HandleTypeDef {
 
 
 /* Exported functions ------------------------------------------------------- */
+nRF24_Status_t nRF24_Init(nRF24_HandleTypeDef * pHnrf24);
+nRF24_Status_t nRF24_Transmit(uint8_t * pTxBuffer, uint8_t length);
+nRF24_Status_t nRF24_Receive(uint8_t * pRxBuffer, uint8_t length);
+nRF24_Status_t nRF24_SetAutoAck(const uint8_t bit, const bool_t enable);
+nRF24_Status_t nRF24_SetFeature(const uint8_t bit, const bool_t enable);
+nRF24_Status_t nRF24_SetDynamicPayload(const uint8_t bit, bool_t enable);
+bool_t nRF24_IsTxFull();
+bool_t nRF24_IsTxEmpty();
+bool_t nRF24_IsRxEmpty();
+bool_t nRF24_IsRxFull();
+nRF24_Status_t nRF24_GetStatus(uint8_t *status);
+nRF24_Status_t nRF24_GetTransmitionStatus(nRF24_TxStatus_t *pTxStatus);
+
+/*!
+ * \brief HAL_GPIO_EXTI_Callback used by nRF24L01 driver. User must define nRF24_irq_callback
+ *        to get interrupt event
+ * \param event_type EVENT_RX_DR: Receiver Data Ready,
+ * 					 EVENT_TX_DS: Transmitter Data Sent,
+ *                   EVENT_MAX_RT:Transmitter retransmit
+ *                   EVENT_GPIO_IRQ: gpio interrupt handler except nRF24L01 IRQ GPIO_pin
+ *  \param data_src  nRF24L01 datapipe or GPIO_pin
+ *  \param data		 nRF24L01 received data
+ *  \param width	 nRF24L01 received data length
+ */
+__weak void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, uint8_t width);
+
 
 #endif /* __API_NRF24_H */

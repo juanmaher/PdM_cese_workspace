@@ -1,0 +1,4 @@
+../Drivers/API/Src/API_spi.c:19:8:SPI_Init	1
+../Drivers/API/Src/API_spi.c:35:8:SPI_TransmitData	1
+../Drivers/API/Src/API_spi.c:40:8:SPI_ReceiveData	1
+../Drivers/API/Src/API_spi.c:45:8:SPI_DeInit	1

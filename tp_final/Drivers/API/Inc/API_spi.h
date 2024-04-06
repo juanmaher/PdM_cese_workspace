@@ -27,25 +27,25 @@ typedef bool bool_t;
  * @brief Initialize the SPI
  * @return void
 */
-bool_t SPI_Init(struct SPI_HandleTypeDef *hspi);
+bool_t SPI_Init(SPI_HandleTypeDef *hspi);
 
 /**
  * @brief Transmit data
  * @return void
 */
-bool_t SPI_TransmitData(struct SPI_HandleTypeDef *hspi, uint8_t * pTxBuffer, uint16_t size);
+bool_t SPI_TransmitData(SPI_HandleTypeDef *hspi, uint8_t * pTxBuffer, uint16_t size);
 
 /**
  * @brief Receive data
  * @return void
 */
-bool_t SPI_ReceiveData(struct SPI_HandleTypeDef *hspi, uint8_t * pRxBuffer, uint16_t size);
+bool_t SPI_ReceiveData(SPI_HandleTypeDef *hspi, uint8_t * pRxBuffer, uint16_t size);
 
 /**
  * @brief Deinitialize the SPI
  * @return void
 */
-bool_t SPI_DeInit(struct SPI_HandleTypeDef *hspi);
+bool_t SPI_DeInit(SPI_HandleTypeDef *hspi);
 
 
 #endif /* __API_SPI_H */
