@@ -337,12 +337,12 @@ typedef struct __nRF24_HandleTypeDef {
    stuck if the SPI communication is corrupted.
    You may modify these timeout values depending on CPU frequency and application
    conditions (interrupts routines ...). */
-#define SPIx_TIMEOUT_MAX                   1000
+#define SPIx_TIMEOUT_MAX                   10000
 
-#define SPIx_CS_GPIO_PORT                        GPIOD
-#define SPIx_CS_PIN                              GPIO_PIN_14
-#define SPIx_CS_GPIO_CLK_ENABLE()                __HAL_RCC_GPIOD_CLK_ENABLE()
-#define SPIx_CS_GPIO_CLK_DISABLE()               __HAL_RCC_GPIOD_CLK_DISABLE()
+#define SPIx_CS_GPIO_PORT                        GPIOA
+#define SPIx_CS_PIN                              GPIO_PIN_4
+#define SPIx_CS_GPIO_CLK_ENABLE()                __HAL_RCC_GPIOA_CLK_ENABLE()
+#define SPIx_CS_GPIO_CLK_DISABLE()               __HAL_RCC_GPIOA_CLK_DISABLE()
 
 #define SPIx_CS_LOW()          HAL_GPIO_WritePin(SPIx_CS_GPIO_PORT, SPIx_CS_PIN, GPIO_PIN_RESET)
 #define SPIx_CS_HIGH()         HAL_GPIO_WritePin(SPIx_CS_GPIO_PORT, SPIx_CS_PIN, GPIO_PIN_SET)
@@ -359,8 +359,8 @@ typedef struct __nRF24_HandleTypeDef {
 
 #define nRF24_IRQ_PIN                                GPIO_PIN_13
 #define nRF24_IRQ_GPIO_PORT                          GPIOD
-#define nRF24_IRQ_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOB_CLK_ENABLE()
-#define nRF24_IRQ_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOB_CLK_DISABLE()
+#define nRF24_IRQ_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOD_CLK_ENABLE()
+#define nRF24_IRQ_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOD_CLK_DISABLE()
 
 /* Exported macro ------------------------------------------------------------*/
 

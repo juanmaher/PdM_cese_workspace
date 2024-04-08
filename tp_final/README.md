@@ -11,3 +11,14 @@ Valores iniciales:
 - Tiempo inicial de parpadeo del LED1: 100 ms.
 
 Además, este programa envía por puerto serie un mensaje indicando que el botón ha sido presionado o soltado. Esto se da cuando hay un flanco ascendente o descendente confirmado por el anti-rebote.
+
+![alt text](image-1.png)
+
+# Orden de cables
+1. CE
+2. SCK
+3. MISO
+4. CSN
+5. MOSI
+6. IRQ
+

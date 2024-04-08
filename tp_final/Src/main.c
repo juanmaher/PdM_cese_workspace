@@ -50,6 +50,9 @@ int main(void)
 	/* Configure the system clock to 180 MHz */
 	SystemClock_Config();
 
+	/* Initialize BSP LED1 */
+	BSP_LED_Init(LED1);
+
 	/* CONFIG */
 	hnrf24.Init->CrcEnable = 0;
 	hnrf24.Init->CrcEncodingScheme = CRC_ENCODING_1_BYTE;
