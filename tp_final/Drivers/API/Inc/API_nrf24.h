@@ -51,7 +51,7 @@ typedef enum {
 } nRF24_CrcEncoding_t;
 
 typedef enum {
-    AW_3_BYTES,
+    AW_3_BYTES = 0x1,
     AW_4_BYTES,
     AW_5_BYTES
 } nRF24_Aw_t;
@@ -108,7 +108,7 @@ typedef struct __nRF24_InitTypeDef {
 } nRF24_InitTypeDef;
 
 typedef struct __nRF24_HandleTypeDef {
-    nRF24_InitTypeDef * Init;
+    nRF24_InitTypeDef Init;
     uint8_t StatusRegister;
     nRF24_Mode_t DeviceMode;
 } nRF24_HandleTypeDef;

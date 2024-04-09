@@ -54,26 +54,26 @@ int main(void)
 	BSP_LED_Init(LED1);
 
 	/* CONFIG */
-	hnrf24.Init->CrcEnable = 0;
-	hnrf24.Init->CrcEncodingScheme = CRC_ENCODING_1_BYTE;
+	hnrf24.Init.CrcEnable = 1;
+	hnrf24.Init.CrcEncodingScheme = CRC_ENCODING_1_BYTE;
 	/* EN_AA */
-	hnrf24.Init->AutoAckEnable = 1;
-	hnrf24.Init->AutoAckDataPipes = 0b00000011;
+	hnrf24.Init.AutoAckEnable = 1;
+	hnrf24.Init.AutoAckDataPipes = 0b00000011;
 	/* EN_RXADDR */
-	hnrf24.Init->RxDataPipes = 0b00000001;
+	hnrf24.Init.RxDataPipes = 0b00000001;
 	/* SETUP_AW */
-	hnrf24.Init->Aw = AW_3_BYTES;
+	hnrf24.Init.Aw = AW_3_BYTES;
 	/* RF_CH */
-	hnrf24.Init->RfChannel = 0b00000010;
+	hnrf24.Init.RfChannel = 0b00000010;
 	/* RF_SETUP */
-	hnrf24.Init->ContWave = 0;
-	hnrf24.Init->RfPower = RF_POWER_0DBM;
-	hnrf24.Init->RfDataRate = RF_DR_2MBPS;
+	hnrf24.Init.ContWave = 0;
+	hnrf24.Init.RfPower = RF_POWER_0DBM;
+	hnrf24.Init.RfDataRate = RF_DR_2MBPS;
 	/* DPL */
-	hnrf24.Init->DplEnable = 1;
-	hnrf24.Init->DplEnableDataPipes = 0b00000011;
+	hnrf24.Init.DplEnable = 1;
+	hnrf24.Init.DplEnableDataPipes = 0b00000011;
 	/* EN_DYN_ACK */
-	hnrf24.Init->DynAckEnable = 0;
+	hnrf24.Init.DynAckEnable = 0;
 
 	hnrf24.StatusRegister = 0;
 	hnrf24.DeviceMode = STANDBYI_MODE;

@@ -15,7 +15,8 @@ typedef enum {
     STANDBYI,
     STANDBYII,
     PRX,
-    PTX
+    PTX,
+    UNDEFINED
 } operationModes_t;
 
 /* Private define ------------------------------------------------------------*/
@@ -30,8 +31,8 @@ static void mySPIx_Init();
 static void myGPIO_Init();
 
 /* Private function in macros */
-#define nRF24_SendReadCmd(addr, value)                      nRF24_SendCmd(R_REGISTER | addr, value, 1)
-#define nRF24_SendWriteCmd(addr, value)                     nRF24_SendCmd(W_REGISTER | addr, value, 1)
+#define nRF24_SendReadCmd(addr, value)                      nRF24_SendCmd(addr, value, 1)
+#define nRF24_SendWriteCmd(addr, value)                     nRF24_SendCmd(addr, value, 1)
 #define nRF24_SendReadRxPlCmd(value, len)                   nRF24_SendCmd(R_RX_PAYLOAD, value, len)
 #define nRF24_SendReadRxPlWidthCmd(value)                   nRF24_SendCmd(R_RX_PL_WID, value, 1)
 #define nRF24_SendWriteTxPlCmd(value, len)                  nRF24_SendCmd(W_TX_PAYLOAD, value, len)
@@ -91,30 +92,30 @@ static uint8_t FEATURE_DFT_VALUE = 0x00; // 0x00
 /* Private functions ---------------------------------------------------------*/
 static nRF24_Status_t nRF24_Reset()
 {
-    CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &CONFIG_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(EN_AA, &EN_AA_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(EN_RXADDR, &EN_RXADDR_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(SETUP_AW, &SETUP_AW_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(SETUP_RETR, &SETUP_RETR_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RF_CH, &RF_CH_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RF_SETUP, &RF_SETUP_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(STATUS, &STATUS_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(RX_ADDR_P0, &RX_ADDR_PO_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(RX_ADDR_P1, &RX_ADDR_P1_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(RX_ADDR_P2, &RX_ADDR_P2_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(RX_ADDR_P3, &RX_ADDR_P3_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(RX_ADDR_P4, &RX_ADDR_P4_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(RX_ADDR_P5, &RX_ADDR_P5_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(TX_ADDR, &TX_ADDR_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RX_PW_P0, &RX_PW_P0_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RX_PW_P1, &RX_PW_P1_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RX_PW_P2, &RX_PW_P2_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RX_PW_P3, &RX_PW_P3_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RX_PW_P4, &RX_PW_P4_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RX_PW_P5, &RX_PW_P5_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(FIFO_STATUS, &FIFO_STATUS_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(DYNPD, &DYNPD_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(FEATURE, &FEATURE_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &CONFIG_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | EN_AA, &EN_AA_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | EN_RXADDR, &EN_RXADDR_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | SETUP_AW, &SETUP_AW_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | SETUP_RETR, &SETUP_RETR_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_CH, &RF_CH_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_SETUP, &RF_SETUP_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | STATUS, &STATUS_DFT_VALUE));
+    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P0, &RX_ADDR_PO_DFT_VALUE));
+    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P1, &RX_ADDR_P1_DFT_VALUE));
+    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P2, &RX_ADDR_P2_DFT_VALUE));
+    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P3, &RX_ADDR_P3_DFT_VALUE));
+    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P4, &RX_ADDR_P4_DFT_VALUE));
+    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P5, &RX_ADDR_P5_DFT_VALUE));
+    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | TX_ADDR, &TX_ADDR_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P0, &RX_PW_P0_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P1, &RX_PW_P1_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P2, &RX_PW_P2_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P3, &RX_PW_P3_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P4, &RX_PW_P4_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P5, &RX_PW_P5_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | FIFO_STATUS, &FIFO_STATUS_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | DYNPD, &DYNPD_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | FEATURE, &FEATURE_DFT_VALUE));
 
     return NRF24_OK;
 }
@@ -127,13 +128,13 @@ static nRF24_Status_t nRF24_UpdateMode(const operationModes_t mode)
         return NRF24_OK;
     }
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(CONFIG, &register_value));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | CONFIG, &register_value));
 
     switch (operationCurrentMode) {
         case POWER_DOWN:
             if (mode == STANDBYI) {
                 register_value |= PWR_UP;
-                CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &(register_value)));
+                CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                 HAL_Delay(START_UP_DELAY_MS);
             }
             break;
@@ -141,11 +142,11 @@ static nRF24_Status_t nRF24_UpdateMode(const operationModes_t mode)
             switch (mode) {
                 case POWER_DOWN:
                     register_value &= ~PWR_UP;
-                    CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &(register_value)));
+                    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                     break;
                 case PRX:
                     register_value |= PRIM_RX;
-                    CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &(register_value)));
+                    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                     nRF24_CE_HIGH();
                     HAL_Delay(RX_DELAY_MS);
                     break;
@@ -154,13 +155,13 @@ static nRF24_Status_t nRF24_UpdateMode(const operationModes_t mode)
                     //     return ERROR_INVALID_MODE;
                     // }
                     register_value |= PRIM_RX;
-                    CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &(register_value)));
+                    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                     nRF24_CE_HIGH();
                     HAL_Delay(TX_DELAY_MS);
                     break;
                 default:
                     register_value &= ~PWR_UP;
-                    CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &(register_value)));
+                    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                     break;
             }
             break;
@@ -188,11 +189,12 @@ static nRF24_Status_t nRF24_SendCmd(uint8_t cmd, uint8_t * value, const uint8_t 
     HAL_Delay(1);
 
     /* Send command */
-    CHECK_SPI(HAL_SPI_Transmit(&hspi1, &cmd, 1, SPIx_TIMEOUT_MAX));
+    CHECK_SPI(HAL_SPI_TransmitReceive(&hspi1, &cmd, &(hnrf24->StatusRegister), 1, SPIx_TIMEOUT_MAX));
 
     if (cmd & W_REGISTER || cmd == W_TX_PAYLOAD || cmd == W_TX_PAYLOAD_NOACK || cmd == W_ACK_PAYLOAD) {
         CHECK_SPI(HAL_SPI_Transmit(&hspi1, value, length, SPIx_TIMEOUT_MAX));
-    } else if (cmd & R_REGISTER || cmd == R_RX_PAYLOAD || cmd == R_RX_PL_WID) {
+    //} else if (cmd == R_REGISTER || cmd & R_REGISTER || cmd == R_RX_PAYLOAD || cmd == R_RX_PL_WID) {
+    } else {
         CHECK_SPI(HAL_SPI_Receive(&hspi1, value, length, SPIx_TIMEOUT_MAX));
     }
 
@@ -210,9 +212,9 @@ static nRF24_Status_t nRF24_SetRegister(const uint8_t registerName, const uint8_
 {
     uint8_t registerValue = 0;
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(registerName, &registerValue));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | registerName, &registerValue));
     registerValue |= bit;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(registerName, &(registerValue)));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | registerName, &(registerValue)));
 
     return NRF24_OK;
 }
@@ -221,9 +223,9 @@ static nRF24_Status_t nRF24_ResetRegister(const uint8_t registerName, const uint
 {
     uint8_t registerValue = 0;
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(registerName, &registerValue));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | registerName, &registerValue));
     registerValue &= ~(bit);
-    CHECK_INTERNAL(nRF24_SendWriteCmd(registerName, &(registerValue)));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | registerName, &(registerValue)));
 
     return NRF24_OK;
 }
@@ -257,9 +259,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi)
     //GPIO_InitStruct.Pull  = GPIO_PULLDOWN;
     HAL_GPIO_Init(SPIx_MISO_MOSI_GPIO_PORT, &GPIO_InitStruct);
 
-    //GPIO_InitStruct.Pin = SPIx_MISO_PIN;
-    //GPIO_InitStruct.Pull  = GPIO_PULLDOWN;
-    //HAL_GPIO_Init(SPIx_MISO_MOSI_GPIO_PORT, &GPIO_InitStruct);
+    GPIO_InitStruct.Pin = SPIx_MISO_PIN;
+    GPIO_InitStruct.Pull  = GPIO_PULLDOWN;
+    HAL_GPIO_Init(SPIx_MISO_MOSI_GPIO_PORT, &GPIO_InitStruct);
 
     /* Configure SPI CS */
     GPIO_InitStruct.Pin = SPIx_CS_PIN;
@@ -291,7 +293,7 @@ static void mySPIx_Init()
             - For STM32F446ZE/STM32F429ZI devices: 11,25 MHz maximum (PCLK2/SPI_BAUDRATEPRESCALER_8 = 90 MHz/8 = 11,25 MHz)
         */
         hspi1.Init.Mode = SPI_MODE_MASTER;
-        hspi1.Init.Direction = SPI_DIRECTION_1LINE;
+        hspi1.Init.Direction = SPI_DIRECTION_2LINES;
         hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
         hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
         hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
@@ -347,59 +349,71 @@ nRF24_Status_t nRF24_Init(nRF24_HandleTypeDef * pHnrf24)
     myGPIO_Init();
     mySPIx_Init();
 
+    HAL_Delay(10);
     CHECK_INTERNAL(nRF24_Reset());
-
-    return NRF24_OK;
-
+    HAL_Delay(10);
     CHECK_INTERNAL(nRF24_UpdateMode(POWER_DOWN));
+    HAL_Delay(10);
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | CONFIG, &register_value));
+    // Responde 0x08
+    //register_value |= hnrf24->Init.CrcEnable ? EN_CRC : 0x00;
+    //register_value |= hnrf24->Init.CrcEncodingScheme ? CRCO : 0x00;
+    //register_value |= hnrf24->Init.PrimRx ? PRIM_RX : ~PRIM_RX;
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(CONFIG, &register_value));
-    register_value |= hnrf24->Init->CrcEnable ? EN_CRC : ~EN_CRC;
-    register_value |= hnrf24->Init->CrcEncodingScheme ? CRCO : ~CRCO;
-    //register_value |= hnrf24->Init->PrimRx ? PRIM_RX : ~PRIM_RX;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &register_value));
+    register_value &= ~(EN_CRC | CRCO); // Limpiar los bits EN_CRC y CRCO en register_value
+    if (hnrf24->Init.CrcEnable) {
+        register_value |= EN_CRC; // Establecer el bit EN_CRC si CrcEnable es verdadero
+    }
+    if (hnrf24->Init.CrcEncodingScheme == CRC_ENCODING_2_BYTES) {
+        register_value |= CRCO; // Establecer el bit CRCO si CrcEncodingScheme es CRC_ENCODING_2_BYTES
+    }
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &register_value));
 
-    nRF24_SetFeature(EN_ACK_PAY, hnrf24->Init->AutoAckEnable);
-    CHECK_INTERNAL(nRF24_SendReadCmd(EN_AA, &register_value));
+    nRF24_SetFeature(EN_ACK_PAY, hnrf24->Init.AutoAckEnable);
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | EN_AA, &register_value));
     // Protection for AutoAckDataPipes
-    hnrf24->Init->AutoAckDataPipes &= ~(0b11000000);
-    register_value &= hnrf24->Init->AutoAckDataPipes;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(EN_AA, &register_value));
+    hnrf24->Init.AutoAckDataPipes &= ~(0b11000000);
+    register_value |= hnrf24->Init.AutoAckDataPipes;
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | EN_AA, &register_value));
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(EN_RXADDR, &register_value));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | EN_RXADDR, &register_value));
     // Protection for RxDataPipes
-    hnrf24->Init->RxDataPipes &= ~(0b11000000);
-    register_value &= hnrf24->Init->RxDataPipes;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(EN_RXADDR, &register_value));
+    hnrf24->Init.RxDataPipes &= ~(0b11000000);
+    register_value |= hnrf24->Init.RxDataPipes;
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | EN_RXADDR, &register_value));
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(SETUP_AW, &register_value));
-    register_value &= hnrf24->Init->Aw;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(SETUP_AW, &register_value));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | SETUP_AW, &register_value));
+    register_value |= hnrf24->Init.Aw;
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | SETUP_AW, &register_value));
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(RF_CH, &register_value));
-    hnrf24->Init->RfChannel &= ~(0b10000000);
-    register_value &= hnrf24->Init->RfChannel;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RF_CH, &register_value));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | RF_CH, &register_value));
+    hnrf24->Init.RfChannel &= ~(0b10000000);
+    register_value |= hnrf24->Init.RfChannel;
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_CH, &register_value));
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(RF_SETUP, &register_value));
-    register_value |= hnrf24->Init->ContWave ? CONT_WAVE : ~CONT_WAVE;
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | RF_SETUP, &register_value));
+    register_value &= ~(CONT_WAVE); // Limpiar los bits CONT_WAVE en register_value
+    if (hnrf24->Init.ContWave) {
+        register_value |= CONT_WAVE; // Establecer el bit CONT_WAVE si ContWave es verdadero
+    }
+    //register_value |= hnrf24->Init.ContWave ? CONT_WAVE : ~CONT_WAVE;
     register_value &= ~(RF_DR_LOW | RF_DR_HIGH);
-    register_value |= hnrf24->Init->RfDataRate;
+    register_value |= hnrf24->Init.RfDataRate;
     register_value &= ~(RF_PWR_2 | RF_PWR_1);
-    register_value |= hnrf24->Init->RfPower;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(RF_SETUP, &register_value));
+    register_value |= hnrf24->Init.RfPower;
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_SETUP, &register_value));
 
-    nRF24_SetFeature(EN_DPL, hnrf24->Init->DplEnable);
-    CHECK_INTERNAL(nRF24_SendReadCmd(DYNPD, &register_value));
+    nRF24_SetFeature(EN_DPL, hnrf24->Init.DplEnable);
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | DYNPD, &register_value));
     //Protection for DplEnableDataPipes
-    hnrf24->Init->DplEnableDataPipes &= ~(0b11000000);
-    register_value &= hnrf24->Init->DplEnableDataPipes;
-    CHECK_INTERNAL(nRF24_SendWriteCmd(DYNPD, &register_value));
+    hnrf24->Init.DplEnableDataPipes &= ~(0b11000000);
+    register_value |= hnrf24->Init.DplEnableDataPipes;
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | DYNPD, &register_value));
 
-    nRF24_SetFeature(EN_DYN_ACK, hnrf24->Init->DynAckEnable);
-
+    nRF24_SetFeature(EN_DYN_ACK, hnrf24->Init.DynAckEnable);
+    HAL_Delay(10);
     nRF24_UpdateMode(STANDBYI);
-
+    HAL_Delay(10);
     if (hnrf24->DeviceMode == TRANSMITTER_MODE) {
         nRF24_UpdateMode(PTX);
     } else if (hnrf24->DeviceMode == RECEIVER_MODE) {
@@ -462,10 +476,10 @@ nRF24_Status_t nRF24_SetAutoAck(const uint8_t bit, const bool_t enable)
 {
     uint8_t registerValue = 0;
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(CONFIG, &registerValue));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | CONFIG, &registerValue));
     if (!(registerValue & EN_CRC)) {
         registerValue |= EN_CRC;
-        CHECK_INTERNAL(nRF24_SendWriteCmd(CONFIG, &(registerValue)));
+        CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(registerValue)));
     }
 
     if (enable) {
@@ -492,12 +506,12 @@ nRF24_Status_t nRF24_SetDynamicPayload(const uint8_t bit, bool_t enable)
 {
     uint8_t registerValue = 0;
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(FEATURE, &registerValue));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | FEATURE, &registerValue));
     if (!(registerValue & EN_DPL)) {
         return ERROR_INVALID_OPTION;
     }
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(EN_AA, &registerValue));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | EN_AA, &registerValue));
     if (!(registerValue & bit)) {
         return ERROR_INVALID_OPTION;
     }
@@ -515,7 +529,7 @@ bool_t nRF24_IsTxFull()
 {
     uint8_t register_fifo_status = 0;
 
-    if (nRF24_SendReadCmd(FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
+    if (nRF24_SendReadCmd(R_REGISTER | FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
         return false;
     }
 
@@ -530,7 +544,7 @@ bool_t nRF24_IsTxEmpty()
 {
     uint8_t register_fifo_status = 0;
 
-    if (nRF24_SendReadCmd(FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
+    if (nRF24_SendReadCmd(R_REGISTER | FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
         return false;
     }
 
@@ -546,7 +560,7 @@ bool_t nRF24_IsRxEmpty()
     uint8_t register_fifo_status = 0;
 
 
-    if (nRF24_SendReadCmd(FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
+    if (nRF24_SendReadCmd(R_REGISTER | FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
         return false;
     }
 
@@ -561,7 +575,7 @@ bool_t nRF24_IsRxFull()
 {
     uint8_t register_fifo_status = 0;
 
-    if (nRF24_SendReadCmd(FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
+    if (nRF24_SendReadCmd(R_REGISTER | FIFO_STATUS, &register_fifo_status) != NRF24_OK) {
         return false;
     }
 
@@ -576,7 +590,7 @@ nRF24_Status_t nRF24_GetStatus(uint8_t *status)
 {
     CHECK_NULL(status);
 
-    CHECK_INTERNAL(nRF24_SendReadCmd(STATUS, status));
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | STATUS, status));
     return NRF24_OK;
 }
 
