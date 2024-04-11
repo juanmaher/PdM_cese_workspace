@@ -25,10 +25,10 @@ void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, ui
 {
 	switch(event_type) {
 		case EVENT_RX_DR:
-			//HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+			BSP_LED_On(LED2);
 			break;
 		case EVENT_TX_DS:
-			//HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+			BSP_LED_Off(LED2);
 			break;
 		case EVENT_MAX_RT:
 			break;
@@ -52,6 +52,7 @@ int main(void)
 
 	/* Initialize BSP LED1 */
 	BSP_LED_Init(LED1);
+	BSP_LED_Init(LED2);
 
 	/* CONFIG */
 	hnrf24.Init.CrcEnable = 1;
@@ -76,7 +77,7 @@ int main(void)
 	hnrf24.Init.DynAckEnable = 0;
 
 	hnrf24.StatusRegister = 0;
-	hnrf24.DeviceMode = STANDBYI_MODE;
+	hnrf24.DeviceMode = RECEIVER_MODE;
 
 	if (nRF24_Init(&hnrf24) != NRF24_OK) {
 		Error_Handler();
@@ -85,7 +86,8 @@ int main(void)
 	/* Infinite loop */
 	while (1)
 	{
-
+		BSP_LED_Toggle(LED1);
+		HAL_Delay(1000);
 	}
 }
 

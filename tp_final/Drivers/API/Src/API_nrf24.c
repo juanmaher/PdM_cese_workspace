@@ -40,7 +40,7 @@ static void myGPIO_Init();
 #define nRF24_SendFlushRx()                                 nRF24_SendCmd(FLUSH_RX, 0, 1)
 #define nRF24_SendReuseTxPlCmd()                            nRF24_SendCmd(REUSE_TX_PL, 0, 1)
 #define nRF24_SendReadRxPlWidCmd()                          nRF24_SendCmd(W_TX_PAYLOAD_NOACK, 0, 1)
-#define nRF24_SendWriteTxPlNoAckCmd(pipe, value, len)       nRF24_SendCmd(W_TX_PAYLOAD_NOACK | pipe, value, len)
+#define nRF24_SendWriteTxPlNoAckCmd(value, len)       nRF24_SendCmd(W_TX_PAYLOAD_NOACK, value, len)
 #define nRF24_SendWriteAckPlCmd(value, len)                 nRF24_SendCmd(W_ACK_PAYLOAD, value, len)
 
 // #define nRF24_SetIRQ(port, pin)                     HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET)
@@ -71,14 +71,14 @@ static uint8_t SETUP_RETR_DFT_VALUE = ARC_1 | ARC_0; // 0x03
 static uint8_t RF_CH_DFT_VALUE = RF_CH_1; // 0x02
 static uint8_t RF_SETUP_DFT_VALUE = RF_DR_HIGH | RF_PWR_2 | RF_PWR_1; // 0x2E
 static uint8_t STATUS_DFT_VALUE = RX_P_NO_3 | RX_P_NO_2 | RX_P_NO_1; // 0x0E
-// static uint8_t RPD_DFT_VALUE = 0x00;
-// static uint8_t RX_ADDR_PO_DFT_VALUE = 0xE7E7E7E7E7;
-// static uint8_t RX_ADDR_P1_DFT_VALUE = 0xC2C2C2C2C2;
-// static uint8_t RX_ADDR_P2_DFT_VALUE = 0xC3;
-// static uint8_t RX_ADDR_P3_DFT_VALUE = 0xC4;
-// static uint8_t RX_ADDR_P4_DFT_VALUE = 0xC5;
-// static uint8_t RX_ADDR_P5_DFT_VALUE = 0xC6;
-// static uint8_t TX_ADDR_DFT_VALUE = 0xE7E7E7E7E7;
+//static uint8_t RPD_DFT_VALUE = 0x00;
+static uint8_t RX_ADDR_PO_DFT_VALUE [4] = {0xE7, 0xE7, 0xE7, 0xE7}; // E7 E7 E7 E7;
+static uint8_t RX_ADDR_P1_DFT_VALUE [4] = {0xC2, 0xC2, 0xC2, 0xC2}; //0xC2C2C2C2C2;
+static uint8_t RX_ADDR_P2_DFT_VALUE = 0xC3;
+static uint8_t RX_ADDR_P3_DFT_VALUE = 0xC4;
+static uint8_t RX_ADDR_P4_DFT_VALUE = 0xC5;
+static uint8_t RX_ADDR_P5_DFT_VALUE = 0xC6;
+static uint8_t TX_ADDR_DFT_VALUE [4] = {0xE7, 0xE7, 0xE7, 0xE7};
 static uint8_t RX_PW_P0_DFT_VALUE = 0x00; // 0x00
 static uint8_t RX_PW_P1_DFT_VALUE = 0x00; // 0x00
 static uint8_t RX_PW_P2_DFT_VALUE = 0x00; // 0x00
@@ -100,13 +100,13 @@ static nRF24_Status_t nRF24_Reset()
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_CH, &RF_CH_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_SETUP, &RF_SETUP_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | STATUS, &STATUS_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P0, &RX_ADDR_PO_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P1, &RX_ADDR_P1_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P2, &RX_ADDR_P2_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P3, &RX_ADDR_P3_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P4, &RX_ADDR_P4_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P5, &RX_ADDR_P5_DFT_VALUE));
-    // CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | TX_ADDR, &TX_ADDR_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P0, RX_ADDR_PO_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P1, RX_ADDR_P1_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P2, &RX_ADDR_P2_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P3, &RX_ADDR_P3_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P4, &RX_ADDR_P4_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P5, &RX_ADDR_P5_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | TX_ADDR, TX_ADDR_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P0, &RX_PW_P0_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P1, &RX_PW_P1_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P2, &RX_PW_P2_DFT_VALUE));
@@ -116,6 +116,11 @@ static nRF24_Status_t nRF24_Reset()
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | FIFO_STATUS, &FIFO_STATUS_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | DYNPD, &DYNPD_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | FEATURE, &FEATURE_DFT_VALUE));
+
+    // Clean IRQ registers
+    CHECK_INTERNAL(nRF24_SetRegister(STATUS, RX_DR));
+    CHECK_INTERNAL(nRF24_SetRegister(STATUS, TX_DS));
+    CHECK_INTERNAL(nRF24_SetRegister(STATUS, MAX_RT));
 
     return NRF24_OK;
 }
@@ -144,17 +149,17 @@ static nRF24_Status_t nRF24_UpdateMode(const operationModes_t mode)
                     register_value &= ~PWR_UP;
                     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                     break;
-                case PRX:
+                case PRX: //PRIM_RX=1 PRX
                     register_value |= PRIM_RX;
                     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                     nRF24_CE_HIGH();
                     HAL_Delay(RX_DELAY_MS);
                     break;
-                case PTX:
+                case PTX: //PRIM_RX=0 PTX
                     // if (nRF24_IsTxEmpty()) {
                     //     return ERROR_INVALID_MODE;
                     // }
-                    register_value |= PRIM_RX;
+                    register_value &= ~PRIM_RX;
                     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | CONFIG, &(register_value)));
                     nRF24_CE_HIGH();
                     HAL_Delay(TX_DELAY_MS);
@@ -186,7 +191,7 @@ static nRF24_Status_t nRF24_SendCmd(uint8_t cmd, uint8_t * value, const uint8_t 
     /* Start SPI communication */
     SPIx_CS_LOW();
 
-    HAL_Delay(1);
+    //HAL_Delay(1);
 
     /* Send command */
     CHECK_SPI(HAL_SPI_TransmitReceive(&hspi1, &cmd, &(hnrf24->StatusRegister), 1, SPIx_TIMEOUT_MAX));
@@ -198,12 +203,12 @@ static nRF24_Status_t nRF24_SendCmd(uint8_t cmd, uint8_t * value, const uint8_t 
         CHECK_SPI(HAL_SPI_Receive(&hspi1, value, length, SPIx_TIMEOUT_MAX));
     }
 
-    HAL_Delay(1);
+    //HAL_Delay(1);
 
     /* Stop SPI communication */
     SPIx_CS_HIGH();
 
-    HAL_Delay(1);
+    //HAL_Delay(1);
 
     return NRF24_OK;
 }
@@ -325,8 +330,6 @@ static void myGPIO_Init()
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(nRF24_CE_GPIO_PORT, &GPIO_InitStruct);
 
-    //HAL_GPIO_WritePin(nRF24_IRQ_GPIO_PORT, nRF24_IRQ_PIN, GPIO_PIN_RESET);
-
     /* Configure IRQ GPIO pin */
     GPIO_InitStruct.Pin = nRF24_IRQ_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
@@ -335,8 +338,8 @@ static void myGPIO_Init()
 
     /* EXTI interrupt init*/
     /* PROBABLEMENTE ESTO ESTE MAL */
-    HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+    HAL_NVIC_SetPriority(EXTI15_10_IRQn, 15, 15);
+    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
 /* Public functions ----------------------------------------------------------*/
@@ -643,20 +646,21 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpio)
                     nRF24_SendReadRxPlCmd(buf, width);
                     nRF24_IRQ_Callback(event_type, data_src, buf, width);
                 }
-                nRF24_ResetRegister(STATUS, MASK_RX_DR);
+                nRF24_SetRegister(STATUS, RX_DR);
             }
         }
 
         if ((status & 0x20) >> EVENT_TX_DS) {  // TX_DS
             event_type = EVENT_TX_DS;
             nRF24_IRQ_Callback(event_type, data_src, buf, 0);
-            nRF24_ResetRegister(STATUS, MASK_TX_DS);
+            nRF24_SetRegister(STATUS, TX_DS);
         }
 
         if ((status & 0x10) >> EVENT_MAX_RT) {  // MAX_RT
             event_type = EVENT_MAX_RT;
             nRF24_IRQ_Callback(event_type, data_src, buf, 0);
-            nRF24_ResetRegister(STATUS, MASK_MAX_RT);
+            nRF24_SetRegister(STATUS, MAX_RT);
+            nRF24_SendFlushTx();
         }
 
     } else {
@@ -668,7 +672,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpio)
 /*!
  * \brief HAL_GPIO_EXTI_Callback used by nRF24L01 driver. User must define nRF24_irq_callback
  *        to get interrupt event
- * \param event_type EVENT_RX_DR: Receiver Data Ready,
+ * \param event_typ e EVENT_RX_DR: Receiver Data Ready,
  * 					 EVENT_TX_DS: Transmitter Data Sent,
  *                   EVENT_MAX_RT:Transmitter retransmit
  *                   EVENT_GPIO_IRQ: gpio interrupt handler except nRF24L01 IRQ GPIO_pin
@@ -676,8 +680,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpio)
  *  \param data		 nRF24L01 received data
  *  \param width	 nRF24L01 received data length
  */
-__weak void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, uint8_t width) {
-
+__weak void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, uint8_t width)
+{
       switch(event_type) {
         case EVENT_RX_DR:
             break;
@@ -690,4 +694,15 @@ __weak void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* d
         default:
             break;
     }
+}
+
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(nRF24_IRQ_PIN);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }

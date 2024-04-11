@@ -14,11 +14,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include "stm32f4xx_hal.h"  		/* <- HAL include */
-#include "stm32f4xx_nucleo_144.h" 	/* <- BSP include */
+#include "stm32f4xx_hal_exti.h"
 
-#include "API_uart.h"
-
+typedef bool bool_t;
 /* Exported types ------------------------------------------------------------*/
 typedef enum {
     NRF24_OK,
@@ -57,6 +57,7 @@ typedef enum {
 } nRF24_Aw_t;
 
 typedef enum {
+    TRANSMITTION_INIT,
     TRANSMITTION_DONE,
     TRANSMITTION_IN_PROGRESS,
     TRANSMITTION_FAILED
@@ -390,7 +391,7 @@ nRF24_Status_t nRF24_GetTransmitionStatus(nRF24_TxStatus_t *pTxStatus);
  *  \param data		 nRF24L01 received data
  *  \param width	 nRF24L01 received data length
  */
-__weak void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, uint8_t width);
+void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, uint8_t width);
 
 
 #endif /* __API_NRF24_H */
