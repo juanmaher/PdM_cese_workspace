@@ -18,6 +18,8 @@
 #include "stm32f4xx_nucleo_144.h" 	/* <- BSP include */
 
 #include "API_nrf24.h"
+#include "API_display.h"
+#include "API_lcd.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

@@ -1,0 +1,9 @@
+../Drivers/API/Src/API_display.c:60:25:display_Send4bitsCmd	3
+../Drivers/API/Src/API_display.c:78:25:display_Send8bitsCmd	3
+../Drivers/API/Src/API_display.c:88:6:HAL_I2C_MspInit	1
+../Drivers/API/Src/API_display.c:112:25:myI2Cx_Init	2
+../Drivers/API/Src/API_display.c:130:18:display_Init	12
+../Drivers/API/Src/API_display.c:158:18:display_Clear	2
+../Drivers/API/Src/API_display.c:165:18:display_PrintChar	2
+../Drivers/API/Src/API_display.c:171:18:display_PrintStringInTopLine	7
+../Drivers/API/Src/API_display.c:185:18:display_PrintStringInBottomLine	7

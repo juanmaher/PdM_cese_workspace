@@ -26,6 +26,7 @@ void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, ui
 	switch(event_type) {
 		case EVENT_RX_DR:
 			BSP_LED_Toggle(LED2);
+			display_PrintStringInBottomLine(data);
 			break;
 		case EVENT_TX_DS:
 			break;
@@ -81,6 +82,19 @@ int main(void)
 	if (nRF24_Init(&hnrf24) != NRF24_OK) {
 		Error_Handler();
 	}
+
+	//Init_Lcd();
+
+	 if (display_Init() != DISPLAY_OK) {
+	 	Error_Handler();
+	 }
+
+	// uint8_t count = 0;
+	static const char adv_lvl_msg[] = "Cercania:";
+
+	display_PrintStringInTopLine((uint8_t *) adv_lvl_msg);
+
+	//SacaTextoLcd((uint8_t *)"IDIOMA");
 
 	/* Infinite loop */
 	while (1)

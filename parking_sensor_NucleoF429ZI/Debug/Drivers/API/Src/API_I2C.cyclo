@@ -1,0 +1,2 @@
+../Drivers/API/Src/API_I2C.c:30:7:I2C_HW_init	2
+../Drivers/API/Src/API_I2C.c:56:13:GPIO_I2C	1

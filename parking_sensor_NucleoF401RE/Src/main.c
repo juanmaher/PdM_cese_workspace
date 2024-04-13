@@ -43,7 +43,7 @@ void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, ui
 			can_transmit = true;
 			break;
 		case EVENT_MAX_RT:
-      //can_transmit = true;
+			can_transmit = true;
 			break;
 		case EVENT_GPIO_IRQ:
 			break;
