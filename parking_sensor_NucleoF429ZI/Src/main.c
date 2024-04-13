@@ -25,10 +25,9 @@ void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, ui
 {
 	switch(event_type) {
 		case EVENT_RX_DR:
-			BSP_LED_On(LED2);
+			BSP_LED_Toggle(LED2);
 			break;
 		case EVENT_TX_DS:
-			BSP_LED_Off(LED2);
 			break;
 		case EVENT_MAX_RT:
 			break;

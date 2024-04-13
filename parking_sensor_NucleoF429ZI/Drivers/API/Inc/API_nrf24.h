@@ -317,6 +317,10 @@ typedef struct __nRF24_HandleTypeDef {
 #define W_TX_PAYLOAD_NOACK      0b10110000
 #define NOP                     0b11111111
 
+/* Commands masks */
+#define R_REGISTER_MASK         0b11100000
+#define W_REGISTER_MASK         0b11100000
+
 /* SPI definition */
 #define SPIx                                     SPI1
 #define SPIx_CLK_ENABLE()                        __HAL_RCC_SPI1_CLK_ENABLE()

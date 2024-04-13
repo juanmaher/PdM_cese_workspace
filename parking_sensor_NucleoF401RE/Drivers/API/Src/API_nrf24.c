@@ -122,6 +122,10 @@ static nRF24_Status_t nRF24_Reset()
     CHECK_INTERNAL(nRF24_SetRegister(STATUS, TX_DS));
     CHECK_INTERNAL(nRF24_SetRegister(STATUS, MAX_RT));
 
+    if (nRF24_IsRxFull()) {
+        CHECK_INTERNAL(nRF24_SendFlushRx());
+    }
+
     return NRF24_OK;
 }
 
@@ -196,10 +200,10 @@ static nRF24_Status_t nRF24_SendCmd(uint8_t cmd, uint8_t * value, const uint8_t 
     /* Send command */
     CHECK_SPI(HAL_SPI_TransmitReceive(&hspi1, &cmd, &(hnrf24->StatusRegister), 1, SPIx_TIMEOUT_MAX));
 
-    if (cmd & W_REGISTER || cmd == W_TX_PAYLOAD || cmd == W_TX_PAYLOAD_NOACK || cmd == W_ACK_PAYLOAD) {
+    if (cmd == FLUSH_TX || cmd == FLUSH_RX || cmd == REUSE_TX_PL || cmd == NOP) {
+    } else if (((cmd & W_REGISTER_MASK) == W_REGISTER) || cmd == W_TX_PAYLOAD || cmd == W_TX_PAYLOAD_NOACK || cmd == W_ACK_PAYLOAD) {
         CHECK_SPI(HAL_SPI_Transmit(&hspi1, value, length, SPIx_TIMEOUT_MAX));
-    //} else if (cmd == R_REGISTER || cmd & R_REGISTER || cmd == R_RX_PAYLOAD || cmd == R_RX_PL_WID) {
-    } else {
+    } else if (((cmd & R_REGISTER_MASK) == R_REGISTER) || cmd == R_RX_PAYLOAD || cmd == R_RX_PL_WID) {
         CHECK_SPI(HAL_SPI_Receive(&hspi1, value, length, SPIx_TIMEOUT_MAX));
     }
 
@@ -340,6 +344,25 @@ static void myGPIO_Init()
     /* PROBABLEMENTE ESTO ESTE MAL */
     HAL_NVIC_SetPriority(EXTI15_10_IRQn, 15, 15);
     HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+}
+
+static nRF24_Status_t nRF24_CheckPacketLostCount()
+{
+    uint8_t observe = 0;
+    uint8_t register_value = 0;
+
+    CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | OBSERVE_TX, &observe));
+
+    // PLOS_COUNT has reached its limit (0xF0)
+    if ((observe & 0xF0) == 0xF0) {
+        // Clear PLOS_CNT starting a transmission session
+        CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | RF_CH, &register_value));
+        hnrf24->Init.RfChannel &= ~(0b10000000);
+        register_value |= hnrf24->Init.RfChannel;
+        CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_CH, &register_value));
+    }
+
+    return NRF24_OK;
 }
 
 /* Public functions ----------------------------------------------------------*/
@@ -661,6 +684,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpio)
             nRF24_IRQ_Callback(event_type, data_src, buf, 0);
             nRF24_SetRegister(STATUS, MAX_RT);
             nRF24_SendFlushTx();
+            nRF24_CheckPacketLostCount();
         }
 
     } else {

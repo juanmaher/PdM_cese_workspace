@@ -43,6 +43,7 @@ void nRF24_IRQ_Callback(uint8_t event_type, uint16_t data_src, uint8_t* data, ui
 			can_transmit = true;
 			break;
 		case EVENT_MAX_RT:
+      //can_transmit = true;
 			break;
 		case EVENT_GPIO_IRQ:
 			break;
@@ -109,7 +110,7 @@ uint8_t send_buffer[33];
 			nRF24_Transmit(send_buffer, strlen((char*)send_buffer));
 		}
 
-		HAL_Delay(100);
+		HAL_Delay(1000);
 
 //		switch (tx_status) {
 //		  case TRANSMITTION_INIT:
