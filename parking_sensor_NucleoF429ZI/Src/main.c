@@ -59,7 +59,7 @@ int main(void)
 	hnrf24.Init.CrcEncodingScheme = CRC_ENCODING_1_BYTE;
 	/* EN_AA */
 	hnrf24.Init.AutoAckEnable = 1;
-	hnrf24.Init.AutoAckDataPipes = 0b00000011;
+	hnrf24.Init.AutoAckDataPipes = 0b00000001;
 	/* EN_RXADDR */
 	hnrf24.Init.RxDataPipes = 0b00000001;
 	/* SETUP_AW */
@@ -72,7 +72,7 @@ int main(void)
 	hnrf24.Init.RfDataRate = RF_DR_2MBPS;
 	/* DPL */
 	hnrf24.Init.DplEnable = 1;
-	hnrf24.Init.DplEnableDataPipes = 0b00000011;
+	hnrf24.Init.DplEnableDataPipes = 0b00000001;
 	/* EN_DYN_ACK */
 	hnrf24.Init.DynAckEnable = 0;
 

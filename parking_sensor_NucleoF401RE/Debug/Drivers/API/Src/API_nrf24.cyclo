@@ -1,6 +1,6 @@
-../Drivers/API/Src/API_nrf24.c:93:23:nRF24_Reset	32
+../Drivers/API/Src/API_nrf24.c:94:23:nRF24_Reset	32
 ../Drivers/API/Src/API_nrf24.c:137:23:nRF24_UpdateMode	18
-../Drivers/API/Src/API_nrf24.c:198:23:nRF24_SendCmd	15
+../Drivers/API/Src/API_nrf24.c:198:23:nRF24_SendCmd	14
 ../Drivers/API/Src/API_nrf24.c:225:23:nRF24_SetRegister	3
 ../Drivers/API/Src/API_nrf24.c:236:23:nRF24_ResetRegister	3
 ../Drivers/API/Src/API_nrf24.c:250:6:HAL_SPI_MspInit	1
