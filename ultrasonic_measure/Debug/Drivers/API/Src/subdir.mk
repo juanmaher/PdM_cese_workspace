@@ -5,13 +5,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Drivers/API/Src/API_display.c 
+../Drivers/API/Src/API_display.c \
+../Drivers/API/Src/API_hcsr04.c 
 
 OBJS += \
-./Drivers/API/Src/API_display.o 
+./Drivers/API/Src/API_display.o \
+./Drivers/API/Src/API_hcsr04.o 
 
 C_DEPS += \
-./Drivers/API/Src/API_display.d 
+./Drivers/API/Src/API_display.d \
+./Drivers/API/Src/API_hcsr04.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +24,7 @@ Drivers/API/Src/%.o Drivers/API/Src/%.su Drivers/API/Src/%.cyclo: ../Drivers/API
 clean: clean-Drivers-2f-API-2f-Src
 
 clean-Drivers-2f-API-2f-Src:
-	-$(RM) ./Drivers/API/Src/API_display.cyclo ./Drivers/API/Src/API_display.d ./Drivers/API/Src/API_display.o ./Drivers/API/Src/API_display.su
+	-$(RM) ./Drivers/API/Src/API_display.cyclo ./Drivers/API/Src/API_display.d ./Drivers/API/Src/API_display.o ./Drivers/API/Src/API_display.su ./Drivers/API/Src/API_hcsr04.cyclo ./Drivers/API/Src/API_hcsr04.d ./Drivers/API/Src/API_hcsr04.o ./Drivers/API/Src/API_hcsr04.su
 
 .PHONY: clean-Drivers-2f-API-2f-Src
 

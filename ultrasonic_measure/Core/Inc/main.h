@@ -29,6 +29,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "API_display.h"
+#include "API_hcsr04.h"
 #include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/
