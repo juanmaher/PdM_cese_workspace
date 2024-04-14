@@ -1,6 +1,7 @@
 "./Drivers/API/Src/API_debounce.o"
 "./Drivers/API/Src/API_delay.o"
 "./Drivers/API/Src/API_gpio.o"
+"./Drivers/API/Src/API_hcsr04.o"
 "./Drivers/API/Src/API_nrf24.o"
 "./Drivers/API/Src/API_spi.o"
 "./Drivers/API/Src/API_uart.o"

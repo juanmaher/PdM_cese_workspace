@@ -33,6 +33,7 @@ static void myGPIO_Init();
 /* Private function in macros */
 #define nRF24_SendReadCmd(addr, value)                      nRF24_SendCmd(addr, value, 1)
 #define nRF24_SendWriteCmd(addr, value)                     nRF24_SendCmd(addr, value, 1)
+#define nRF24_SendWriteLenCmd(addr, value, len)                     nRF24_SendCmd(addr, value, len)
 #define nRF24_SendReadRxPlCmd(value, len)                   nRF24_SendCmd(R_RX_PAYLOAD, value, len)
 #define nRF24_SendReadRxPlWidthCmd(value)                   nRF24_SendCmd(R_RX_PL_WID, value, 1)
 #define nRF24_SendWriteTxPlCmd(value, len)                  nRF24_SendCmd(W_TX_PAYLOAD, value, len)
@@ -67,7 +68,7 @@ static uint8_t CONFIG_DFT_VALUE = EN_CRC; // 0x08
 static uint8_t EN_AA_DFT_VALUE = ENAA_P5 | ENAA_P4 | ENAA_P3 | ENAA_P2 | ENAA_P1 | ENAA_P0; // 0x3F
 static uint8_t EN_RXADDR_DFT_VALUE = ERX_P1 | ERX_P0; // 0x03
 static uint8_t SETUP_AW_DFT_VALUE = AW_1 | AW_0; // 0x03
-static uint8_t SETUP_RETR_DFT_VALUE = ARC_1 | ARC_0; // 0x03
+static uint8_t SETUP_RETR_DFT_VALUE = ARD_7 | ARD_6 | ARD_5 | ARD_4 | ARC_3 | ARC_2 | ARC_1 | ARC_0; // 0xFF
 static uint8_t RF_CH_DFT_VALUE = RF_CH_1; // 0x02
 static uint8_t RF_SETUP_DFT_VALUE = RF_DR_HIGH | RF_PWR_2 | RF_PWR_1; // 0x2E
 static uint8_t STATUS_DFT_VALUE = RX_P_NO_3 | RX_P_NO_2 | RX_P_NO_1; // 0x0E
@@ -100,13 +101,13 @@ static nRF24_Status_t nRF24_Reset()
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_CH, &RF_CH_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RF_SETUP, &RF_SETUP_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | STATUS, &STATUS_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P0, RX_ADDR_PO_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P1, RX_ADDR_P1_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteLenCmd(W_REGISTER | RX_ADDR_P0, RX_ADDR_PO_DFT_VALUE,4));
+    CHECK_INTERNAL(nRF24_SendWriteLenCmd(W_REGISTER | RX_ADDR_P1, RX_ADDR_P1_DFT_VALUE,4));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P2, &RX_ADDR_P2_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P3, &RX_ADDR_P3_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P4, &RX_ADDR_P4_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_ADDR_P5, &RX_ADDR_P5_DFT_VALUE));
-    CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | TX_ADDR, TX_ADDR_DFT_VALUE));
+    CHECK_INTERNAL(nRF24_SendWriteLenCmd(W_REGISTER | TX_ADDR, TX_ADDR_DFT_VALUE,4));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P0, &RX_PW_P0_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P1, &RX_PW_P1_DFT_VALUE));
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | RX_PW_P2, &RX_PW_P2_DFT_VALUE));
@@ -124,6 +125,10 @@ static nRF24_Status_t nRF24_Reset()
 
     if (nRF24_IsRxFull()) {
         CHECK_INTERNAL(nRF24_SendFlushRx());
+    }
+
+    if (nRF24_IsTxFull()) {
+        CHECK_INTERNAL(nRF24_SendFlushTx());
     }
 
     return NRF24_OK;
@@ -200,7 +205,7 @@ static nRF24_Status_t nRF24_SendCmd(uint8_t cmd, uint8_t * value, const uint8_t 
     /* Send command */
     CHECK_SPI(HAL_SPI_TransmitReceive(&hspi1, &cmd, &(hnrf24->StatusRegister), 1, SPIx_TIMEOUT_MAX));
 
-    if (cmd == FLUSH_TX || cmd == FLUSH_RX || cmd == REUSE_TX_PL || cmd == NOP) {
+    if (cmd == FLUSH_TX || cmd == FLUSH_RX || cmd == REUSE_TX_PL) {
     } else if (((cmd & W_REGISTER_MASK) == W_REGISTER) || cmd == W_TX_PAYLOAD || cmd == W_TX_PAYLOAD_NOACK || cmd == W_ACK_PAYLOAD) {
         CHECK_SPI(HAL_SPI_Transmit(&hspi1, value, length, SPIx_TIMEOUT_MAX));
     } else if (((cmd & R_REGISTER_MASK) == R_REGISTER) || cmd == R_RX_PAYLOAD || cmd == R_RX_PL_WID) {
@@ -405,7 +410,7 @@ nRF24_Status_t nRF24_Init(nRF24_HandleTypeDef * pHnrf24)
     CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | EN_RXADDR, &register_value));
     // Protection for RxDataPipes
     hnrf24->Init.RxDataPipes &= ~(0b11000000);
-    register_value |= hnrf24->Init.RxDataPipes;
+    register_value &= hnrf24->Init.RxDataPipes;
     CHECK_INTERNAL(nRF24_SendWriteCmd(W_REGISTER | EN_RXADDR, &register_value));
 
     CHECK_INTERNAL(nRF24_SendReadCmd(R_REGISTER | SETUP_AW, &register_value));
