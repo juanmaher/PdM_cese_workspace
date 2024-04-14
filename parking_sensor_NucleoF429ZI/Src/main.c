@@ -83,8 +83,6 @@ int main(void)
 		Error_Handler();
 	}
 
-	//Init_Lcd();
-
 	 if (display_Init() != DISPLAY_OK) {
 	 	Error_Handler();
 	 }
@@ -93,8 +91,6 @@ int main(void)
 	static const char adv_lvl_msg[] = "Cercania:";
 
 	display_PrintStringInTopLine((uint8_t *) adv_lvl_msg);
-
-	//SacaTextoLcd((uint8_t *)"IDIOMA");
 
 	/* Infinite loop */
 	while (1)
