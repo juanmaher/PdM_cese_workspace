@@ -30,6 +30,7 @@ extern "C" {
 #include "stm32f4xx_hal.h"
 #include "API_display.h"
 #include "API_hcsr04.h"
+#include "API_uart.h"
 #include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/

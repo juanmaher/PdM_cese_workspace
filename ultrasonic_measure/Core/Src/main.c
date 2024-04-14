@@ -48,8 +48,9 @@ ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptor
 
 ETH_HandleTypeDef heth;
 
-//TIM_HandleTypeDef htim1;
+// TIM_HandleTypeDef htim1;
 
+// UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 PCD_HandleTypeDef hpcd_USB_OTG_FS;
@@ -64,7 +65,8 @@ static void MX_GPIO_Init(void);
 static void MX_ETH_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
-static void MX_TIM1_Init(void);
+// static void MX_TIM1_Init(void);
+// static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -105,15 +107,19 @@ int main(void)
   MX_ETH_Init();
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
-  //MX_TIM1_Init();
-  //HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1);
+  // MX_TIM1_Init();
+  // MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-	 if (display_Init() != DISPLAY_OK) {
+//	 if (display_Init() != DISPLAY_OK) {
+//	 	Error_Handler();
+//	 }
+
+   if (hcsr04_Init() != HCSR04_OK) {
 	 	Error_Handler();
 	 }
 
-   if (hcsr04_Init() != HCSR04_OK) {
+   if (uart_Init() != UART_OK) {
 	 	Error_Handler();
 	 }
 
@@ -144,6 +150,7 @@ int main(void)
     	// Usar sprintf para convertir el número a una cadena de caracteres
     	    sprintf(cadena, "%u", Distance); // %u se utiliza para especificar un entero sin signo
     	    display_PrintStringInBottomLine((uint8_t *) cadena);
+          uart_SendStringSize((uint8_t *) cadena, strlen(cadena));
     }
 
     
@@ -264,7 +271,7 @@ static void MX_ETH_Init(void)
 
 //   /* USER CODE END TIM1_Init 1 */
 //   htim1.Instance = TIM1;
-//   htim1.Init.Prescaler = 168-1;
+//   htim1.Init.Prescaler = 72-1;
 //   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
 //   htim1.Init.Period = 0xffff-1;
 //   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -291,6 +298,39 @@ static void MX_ETH_Init(void)
 //   /* USER CODE BEGIN TIM1_Init 2 */
 
 //   /* USER CODE END TIM1_Init 2 */
+
+// }
+
+// /**
+//   * @brief USART2 Initialization Function
+//   * @param None
+//   * @retval None
+//   */
+// static void MX_USART2_UART_Init(void)
+// {
+
+//   /* USER CODE BEGIN USART2_Init 0 */
+
+//   /* USER CODE END USART2_Init 0 */
+
+//   /* USER CODE BEGIN USART2_Init 1 */
+
+//   /* USER CODE END USART2_Init 1 */
+//   huart2.Instance = USART2;
+//   huart2.Init.BaudRate = 115200;
+//   huart2.Init.WordLength = UART_WORDLENGTH_8B;
+//   huart2.Init.StopBits = UART_STOPBITS_1;
+//   huart2.Init.Parity = UART_PARITY_NONE;
+//   huart2.Init.Mode = UART_MODE_TX;
+//   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+//   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+//   if (HAL_UART_Init(&huart2) != HAL_OK)
+//   {
+//     Error_Handler();
+//   }
+//   /* USER CODE BEGIN USART2_Init 2 */
+
+//   /* USER CODE END USART2_Init 2 */
 
 // }
 

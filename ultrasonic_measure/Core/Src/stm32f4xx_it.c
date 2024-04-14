@@ -198,9 +198,9 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
-// /**
-//   * @brief This function handles TIM1 capture compare interrupt.
-//   */
+/**
+  * @brief This function handles TIM1 capture compare interrupt.
+  */
 // void TIM1_CC_IRQHandler(void)
 // {
 //   /* USER CODE BEGIN TIM1_CC_IRQn 0 */
