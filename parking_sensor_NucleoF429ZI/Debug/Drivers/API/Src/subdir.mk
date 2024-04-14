@@ -5,7 +5,6 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Drivers/API/Src/API_I2C.c \
 ../Drivers/API/Src/API_debounce.c \
 ../Drivers/API/Src/API_delay.c \
 ../Drivers/API/Src/API_display.c \
@@ -16,7 +15,6 @@ C_SRCS += \
 ../Drivers/API/Src/API_uart.c 
 
 OBJS += \
-./Drivers/API/Src/API_I2C.o \
 ./Drivers/API/Src/API_debounce.o \
 ./Drivers/API/Src/API_delay.o \
 ./Drivers/API/Src/API_display.o \
@@ -27,7 +25,6 @@ OBJS += \
 ./Drivers/API/Src/API_uart.o 
 
 C_DEPS += \
-./Drivers/API/Src/API_I2C.d \
 ./Drivers/API/Src/API_debounce.d \
 ./Drivers/API/Src/API_delay.d \
 ./Drivers/API/Src/API_display.d \
