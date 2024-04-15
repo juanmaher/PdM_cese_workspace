@@ -146,10 +146,10 @@ hcsr04_Status_t myGPIO_Init()
     hcsr04_TRIG_GPIO_CLK_ENABLE();
 
     /*Configure GPIO pin Output Level */
-    HAL_GPIO_WritePin(hcsr04_TRIG_GPIO_PORT, hcsr04_ECHO_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(hcsr04_TRIG_GPIO_PORT, hcsr04_TRIG_PIN, GPIO_PIN_RESET);
 
     /*Configure TRIG GPIO pin : PE2 */
-    GPIO_InitStruct.Pin = hcsr04_ECHO_PIN;
+    GPIO_InitStruct.Pin = hcsr04_TRIG_PIN;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

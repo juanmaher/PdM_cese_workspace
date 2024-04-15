@@ -50,9 +50,9 @@ int main(void)
         Error_Handler();
     }
 
-    if (uart_Init() != UART_OK) {
-        Error_Handler();
-    }
+    // if (uart_Init() != UART_OK) {
+    //     Error_Handler();
+    // }
 
     // uint8_t count = 0;
     static const char adv_lvl_msg[] = "Cercania:";
@@ -74,7 +74,7 @@ int main(void)
             // Usar sprintf para convertir el número a una cadena de caracteres
             sprintf(cadena, "%u", Distance); // %u se utiliza para especificar un entero sin signo
             display_PrintStringInBottomLine((uint8_t *) cadena);
-            uart_SendStringSize((uint8_t *) cadena, strlen(cadena));
+            //uart_SendStringSize((uint8_t *) cadena, strlen(cadena));
       }
     }
 }
