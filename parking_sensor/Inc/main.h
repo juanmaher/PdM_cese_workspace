@@ -22,6 +22,7 @@
 #include "API_display.h"
 #include "API_hcsr04.h"
 #include "API_uart.h"
+#include "API_reverse.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

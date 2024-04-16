@@ -8,14 +8,41 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/* Private includes ----------------------------------------------------------*/
 /* Private typedef -----------------------------------------------------------*/
+typedef enum {
+    CONFIGURATION,
+    WELCOME,
+    IDLE,
+    MEASURING,
+    SHARING
+} parkingSensor_State_t;
+
 /* Private define ------------------------------------------------------------*/
+#define WELCOME_DELAY_DURATION_MS               1000
+#define DISPLAYING_DATA_DELAY_DURATION_MS       1000
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+static parkingSensor_State_t parkingSensor_State = CONFIGURATION;
+static delay_t welcome_delay;
+static delay_t displaying_data_delay;
+
+static const char welcome_msg[] = "Parking Sensor";
+static bool welcome_msg_flag = false;
+
+static char distance_msg[16];
+static bool distance_msg_flag = false;
+
+static uint16_t last_distance = 0;
+static uint16_t distance_processed = 0;
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void Error_Handler(void);
+static void parkingSensor_UpdateFSM();
+void hcsr04_IRQ_Callback(uint16_t distance);
+uint8_t parking_ProcessData();
+void parking_GenerateLevel(char * st, int nivel_resolucion);
 
 /* Private user code ---------------------------------------------------------*/
 /**
@@ -24,56 +51,131 @@ static void Error_Handler(void);
   */
 int main(void)
 {
-    /* STM32F4xx HAL library initialization:
-        - Configure the Flash prefetch
-        - Systick timer is configured by default as source of time base, but user 
-          can eventually implement his proper time base source (a general purpose 
-          timer for example or other time source), keeping in mind that Time base 
-          duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and 
-          handled in milliseconds basis.
-        - Set NVIC Group Priority to 4
-        - Low Level Initialization
-    */
     HAL_Init();
 
     /* Configure the system clock to 180 MHz */
     SystemClock_Config();
 
-    /* Initialize all configured peripherals */
-    if (display_Init() != DISPLAY_OK) {
-        Error_Handler();
-    }
-
-    if (hcsr04_Init() != HCSR04_OK) {
-        Error_Handler();
-    }
-
-    if (uart_Init() != UART_OK) {
-         Error_Handler();
-    }
-
-    // uint8_t count = 0;
-    static const char adv_lvl_msg[] = "Cercania:";
-    // Definir un array de caracteres (string) para almacenar el resultado
-    char cadena[3]; // Se reserva espacio para el número y el carácter nulo de terminación
-
-    display_PrintStringInTopLine((uint8_t *) adv_lvl_msg);
-
     /* Infinite loop */
-    while (1)
-    {
-        hcsr04_StartMeasure();
-        HAL_Delay(1000);
+    while (1) {
+        parkingSensor_UpdateFSM();
+        HAL_Delay(100);
+    }
+}
 
-        int Distance = hcsr04_GetDistance();
-        if (Distance < 0) {
-            display_PrintStringInBottomLine((uint8_t *) "Muy lejos");
-        } else {
-            // Usar sprintf para convertir el número a una cadena de caracteres
-            sprintf(cadena, "%u", Distance); // %u se utiliza para especificar un entero sin signo
-            display_PrintStringInBottomLine((uint8_t *) cadena);
-            uart_SendStringSize((uint8_t *) cadena, strlen(cadena));
-      }
+static void parkingSensor_UpdateFSM()
+{
+    switch (parkingSensor_State) {
+        case CONFIGURATION:
+            if (display_Init() != DISPLAY_OK)
+                Error_Handler();
+
+            if (hcsr04_Init() != HCSR04_OK)
+                Error_Handler();
+
+            if (uart_Init() != UART_OK)
+                Error_Handler();
+            
+            if (reverse_Init() != REVERSE_OK)
+                Error_Handler();
+
+            delayInit(&welcome_delay, WELCOME_DELAY_DURATION_MS);
+            delayInit(&displaying_data_delay, DISPLAYING_DATA_DELAY_DURATION_MS);
+            parkingSensor_State = WELCOME;
+            break;
+
+        case WELCOME:
+            if (!welcome_msg_flag) {
+                welcome_msg_flag = true;
+                display_Clear();
+                display_PrintStringInTopLine((uint8_t *) welcome_msg);
+                display_TurnOn();
+            }
+            
+            if (delayRead(&welcome_delay)) {
+                display_TurnOff();
+                parkingSensor_State = IDLE;
+            }
+            break;
+
+        case IDLE:
+            if (reverse_GetState())
+                parkingSensor_State = MEASURING;
+            break;
+
+        case MEASURING:
+            if (reverse_GetState()) {
+                if (!hcsr04_GetStatusMeasuring())
+                    hcsr04_StartMeasure();
+            } else {
+                display_TurnOff();
+                parkingSensor_State = IDLE;
+            }
+            break;
+
+        case SHARING:
+            if (reverse_GetState()) {
+                if (!distance_msg_flag) {
+                    distance_msg_flag = true;
+                    distance_processed = parking_ProcessData();
+                    parking_GenerateLevel(distance_msg, distance_processed);
+                    display_Clear();
+                    display_PrintStringInTopLine((uint8_t *) distance_msg);
+                    display_PrintStringInBottomLine((uint8_t *) distance_msg);
+                    display_TurnOn();
+                    uart_SendStringSize((uint8_t *) distance_msg, strlen(distance_msg));
+                }
+                if (delayRead(&displaying_data_delay))
+                    parkingSensor_State = MEASURING;
+            } else {
+                display_TurnOff();
+                parkingSensor_State = IDLE;
+            }
+            break;
+
+        default:
+            Error_Handler();
+            break;
+    }
+}
+
+void hcsr04_IRQ_Callback(uint16_t distance)
+{
+    last_distance = distance;
+    distance_msg_flag = false;
+    parkingSensor_State = SHARING;
+}
+
+uint8_t parking_ProcessData()
+{
+    if (last_distance > 50) {
+        return 0;
+    }
+
+    for (int i = 1; i <= 8; i++) {
+        if (last_distance >= (50 - (i * 6.25))) {
+            return i - 1;
+        }
+    }
+
+    return 7;
+}
+
+void parking_GenerateLevel(char * st, int nivel_resolucion)
+{
+    if (st == NULL || nivel_resolucion < 0 || nivel_resolucion > 8) {
+        Error_Handler();
+        return;
+    }
+
+    memset(st, 0, sizeof(distance_msg));
+
+    if (nivel_resolucion == 0) {
+        return;
+    }
+
+    for (int i = 0; i < nivel_resolucion*2+2; i++) {
+        st[i] = 0xFF;
     }
 }
 

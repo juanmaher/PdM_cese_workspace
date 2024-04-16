@@ -45,6 +45,7 @@ typedef enum {
 /* Exported functions ------------------------------------------------------- */
 hcsr04_Status_t hcsr04_Init();
 hcsr04_Status_t hcsr04_StartMeasure();
-uint8_t hcsr04_GetDistance();
+bool hcsr04_GetStatusMeasuring();
+void hcsr04_IRQ_Callback(uint16_t distance);
 
 #endif /* __API_HCSR04_H */

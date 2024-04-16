@@ -113,5 +113,7 @@ display_Status_t display_Clear();
 display_Status_t display_PrintChar(uint8_t ch);
 display_Status_t display_PrintStringInTopLine(uint8_t * buf);
 display_Status_t display_PrintStringInBottomLine(uint8_t * buf);
+display_Status_t display_TurnOn();
+display_Status_t display_TurnOff();
 
 #endif /* __API_DISPLAY_H */

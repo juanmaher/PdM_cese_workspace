@@ -9,6 +9,7 @@ C_SRCS += \
 ../Drivers/API/Src/API_delay.c \
 ../Drivers/API/Src/API_display.c \
 ../Drivers/API/Src/API_hcsr04.c \
+../Drivers/API/Src/API_reverse.c \
 ../Drivers/API/Src/API_uart.c 
 
 OBJS += \
@@ -16,6 +17,7 @@ OBJS += \
 ./Drivers/API/Src/API_delay.o \
 ./Drivers/API/Src/API_display.o \
 ./Drivers/API/Src/API_hcsr04.o \
+./Drivers/API/Src/API_reverse.o \
 ./Drivers/API/Src/API_uart.o 
 
 C_DEPS += \
@@ -23,6 +25,7 @@ C_DEPS += \
 ./Drivers/API/Src/API_delay.d \
 ./Drivers/API/Src/API_display.d \
 ./Drivers/API/Src/API_hcsr04.d \
+./Drivers/API/Src/API_reverse.d \
 ./Drivers/API/Src/API_uart.d 
 
 
@@ -33,7 +36,7 @@ Drivers/API/Src/%.o Drivers/API/Src/%.su Drivers/API/Src/%.cyclo: ../Drivers/API
 clean: clean-Drivers-2f-API-2f-Src
 
 clean-Drivers-2f-API-2f-Src:
-	-$(RM) ./Drivers/API/Src/API_debounce.cyclo ./Drivers/API/Src/API_debounce.d ./Drivers/API/Src/API_debounce.o ./Drivers/API/Src/API_debounce.su ./Drivers/API/Src/API_delay.cyclo ./Drivers/API/Src/API_delay.d ./Drivers/API/Src/API_delay.o ./Drivers/API/Src/API_delay.su ./Drivers/API/Src/API_display.cyclo ./Drivers/API/Src/API_display.d ./Drivers/API/Src/API_display.o ./Drivers/API/Src/API_display.su ./Drivers/API/Src/API_hcsr04.cyclo ./Drivers/API/Src/API_hcsr04.d ./Drivers/API/Src/API_hcsr04.o ./Drivers/API/Src/API_hcsr04.su ./Drivers/API/Src/API_uart.cyclo ./Drivers/API/Src/API_uart.d ./Drivers/API/Src/API_uart.o ./Drivers/API/Src/API_uart.su
+	-$(RM) ./Drivers/API/Src/API_debounce.cyclo ./Drivers/API/Src/API_debounce.d ./Drivers/API/Src/API_debounce.o ./Drivers/API/Src/API_debounce.su ./Drivers/API/Src/API_delay.cyclo ./Drivers/API/Src/API_delay.d ./Drivers/API/Src/API_delay.o ./Drivers/API/Src/API_delay.su ./Drivers/API/Src/API_display.cyclo ./Drivers/API/Src/API_display.d ./Drivers/API/Src/API_display.o ./Drivers/API/Src/API_display.su ./Drivers/API/Src/API_hcsr04.cyclo ./Drivers/API/Src/API_hcsr04.d ./Drivers/API/Src/API_hcsr04.o ./Drivers/API/Src/API_hcsr04.su ./Drivers/API/Src/API_reverse.cyclo ./Drivers/API/Src/API_reverse.d ./Drivers/API/Src/API_reverse.o ./Drivers/API/Src/API_reverse.su ./Drivers/API/Src/API_uart.cyclo ./Drivers/API/Src/API_uart.d ./Drivers/API/Src/API_uart.o ./Drivers/API/Src/API_uart.su
 
 .PHONY: clean-Drivers-2f-API-2f-Src
 
