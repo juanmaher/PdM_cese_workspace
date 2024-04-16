@@ -32,7 +32,7 @@ typedef enum {
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static I2C_HandleTypeDef hi2c1;
-
+static display_State_t display_state = TURN_OFF;
 /* Private function prototypes -----------------------------------------------*/
 static display_Status_t myI2Cx_Init();
 static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_type, bool bck_enable);
@@ -205,11 +205,18 @@ display_Status_t display_PrintStringInBottomLine(uint8_t * buf)
 display_Status_t display_TurnOn()
 {
     CHECK_INTERNAL(display_Send8bitsControlCmd(CMD_TURN_ON_DISPLAY, true));
+    display_state = TURN_ON;
     return DISPLAY_OK;
 }
 
 display_Status_t display_TurnOff()
 {
     CHECK_INTERNAL(display_Send8bitsControlCmd(CMD_TURN_OFF_DISPLAY, false));
+    display_state = TURN_OFF;
     return DISPLAY_OK;
+}
+
+display_State_t display_GetState()
+{
+    return display_state;
 }

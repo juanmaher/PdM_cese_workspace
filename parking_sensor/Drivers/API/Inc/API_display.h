@@ -24,6 +24,11 @@ typedef enum {
     DISPLAY_ERROR_HAL
 } display_Status_t;
 
+typedef enum {
+    TURN_OFF = 0,
+    TURN_ON = 1
+} display_State_t;
+
 /* Exported constants --------------------------------------------------------*/
 
 /* Display control */
@@ -115,5 +120,6 @@ display_Status_t display_PrintStringInTopLine(uint8_t * buf);
 display_Status_t display_PrintStringInBottomLine(uint8_t * buf);
 display_Status_t display_TurnOn();
 display_Status_t display_TurnOff();
+display_State_t display_GetState();
 
 #endif /* __API_DISPLAY_H */

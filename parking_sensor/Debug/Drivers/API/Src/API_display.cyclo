@@ -8,4 +8,5 @@
 ../Drivers/API/Src/API_display.c:179:18:display_PrintStringInTopLine	6
 ../Drivers/API/Src/API_display.c:192:18:display_PrintStringInBottomLine	6
 ../Drivers/API/Src/API_display.c:205:18:display_TurnOn	2
-../Drivers/API/Src/API_display.c:211:18:display_TurnOff	2
+../Drivers/API/Src/API_display.c:212:18:display_TurnOff	2
+../Drivers/API/Src/API_display.c:219:17:display_GetState	1

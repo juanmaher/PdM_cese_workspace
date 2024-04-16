@@ -30,6 +30,7 @@ static delay_t displaying_data_delay;
 static const char welcome_msg[] = "Parking Sensor";
 static bool welcome_msg_flag = false;
 
+static char distance_dbg_msg[16];
 static char distance_msg[16];
 static bool distance_msg_flag = false;
 
@@ -118,12 +119,15 @@ static void parkingSensor_UpdateFSM()
                 if (!distance_msg_flag) {
                     distance_msg_flag = true;
                     distance_processed = parking_ProcessData();
+                    sprintf(distance_dbg_msg, "%u \r\n", distance_processed);
+                    uart_SendStringSize((uint8_t *) distance_dbg_msg, strlen(distance_dbg_msg));
                     parking_GenerateLevel(distance_msg, distance_processed);
                     display_Clear();
                     display_PrintStringInTopLine((uint8_t *) distance_msg);
                     display_PrintStringInBottomLine((uint8_t *) distance_msg);
-                    display_TurnOn();
-                    uart_SendStringSize((uint8_t *) distance_msg, strlen(distance_msg));
+                    if (!display_GetState()) {
+                        display_TurnOn();
+                    }
                 }
                 if (delayRead(&displaying_data_delay))
                     parkingSensor_State = MEASURING;
