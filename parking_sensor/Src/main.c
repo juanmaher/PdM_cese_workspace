@@ -1,0 +1,305 @@
+/**
+ ******************************************************************************
+ * @file    Src/main.c
+ * @author  Juan Manuel Hernández
+ * @brief   Main program body
+ ******************************************************************************
+ */
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/* Private typedef -----------------------------------------------------------*/
+typedef enum {
+    CONFIGURATION, // Configures the modules
+    WELCOME, // Displays the welcome message
+    IDLE, // Represents a low enegy state
+    MEASURING, // Starts measuring the distance
+    SHARING // Shars the data to the outside
+} parkingSensor_State_t;
+
+/* Private define ------------------------------------------------------------*/
+#define WELCOME_DELAY_DURATION_MS                   1000
+#define DISPLAYING_DATA_DELAY_DURATION_MS           1000
+#define MIN_RESOLUTION_LEVEL                        0
+#define MAX_RESOLUTION_LEVEL                        8
+// Constant that divides the maximum distance by the number of resolution levels
+#define STEP_RESOLUTION_LEVEL                       (hcsr04_MAX_DISTANCE/(MAX_RESOLUTION_LEVEL+1)) // 6.25
+
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+static parkingSensor_State_t parkingSensor_State = CONFIGURATION;
+static delay_t welcome_delay;
+static delay_t displaying_data_delay;
+
+static const char welcome_msg[] = "Parking Sensor";
+static bool welcome_msg_flag = false;
+
+static char distance_dbg_msg[MAX_CHAR_PER_LINE];
+static char distance_msg[MAX_CHAR_PER_LINE];
+static bool distance_msg_flag = false;
+
+static uint16_t last_distance = 0;
+static uint16_t distance_processed = 0;
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void Error_Handler(void);
+static void parkingSensor_UpdateFSM();
+void hcsr04_IRQ_Callback(uint16_t distance);
+uint8_t parking_ProcessData();
+void parking_GenerateLevel(char * st, int nivel_resolucion);
+
+/* Private user code ---------------------------------------------------------*/
+/**
+  * @brief  The application entry point.
+  * @param void
+  * @retval int
+  */
+int main(void)
+{
+    HAL_Init();
+
+    /* Configure the system clock to 180 MHz */
+    SystemClock_Config();
+
+    /* Infinite loop */
+    while (1) {
+        /* Update the global state machine */
+        parkingSensor_UpdateFSM();
+        HAL_Delay(100);
+    }
+}
+
+/**
+ * @brief Update the state machine of the parking sensor
+ * @param void
+ * @retval void
+*/
+static void parkingSensor_UpdateFSM()
+{
+    switch (parkingSensor_State) {
+        case CONFIGURATION:
+            if (display_Init() != DISPLAY_OK)
+                Error_Handler();
+
+            if (hcsr04_Init() != HCSR04_OK)
+                Error_Handler();
+
+            if (uart_Init() != UART_OK)
+                Error_Handler();
+            
+            if (reverse_Init() != REVERSE_OK)
+                Error_Handler();
+
+            delayInit(&welcome_delay, WELCOME_DELAY_DURATION_MS);
+            delayInit(&displaying_data_delay, DISPLAYING_DATA_DELAY_DURATION_MS);
+            parkingSensor_State = WELCOME;
+            break;
+
+        case WELCOME:
+            // Display the welcome message just one time
+            if (!welcome_msg_flag) {
+                welcome_msg_flag = true;
+                display_Clear();
+                display_PrintStringInTopLine((uint8_t *) welcome_msg);
+                display_TurnOn();
+            }
+
+            // Non-blocking delay of WELCOME_DELAY_DURATION_MS and then transitionate to IDLE
+            if (delayRead(&welcome_delay)) {
+                parkingSensor_State = IDLE;
+            }
+            break;
+
+        case IDLE:
+            // Check if the reverse stills disactive
+            if (!reverse_GetState()) {
+                if (display_GetState()) {
+                    display_TurnOff();
+                }
+            } else {
+                parkingSensor_State = MEASURING;
+            }
+            break;
+
+        case MEASURING:
+            // Check if the reverse stills active
+            if (reverse_GetState()) {
+                if (!hcsr04_GetStatusMeasuring())
+                    hcsr04_StartMeasure();
+            } else {
+                parkingSensor_State = IDLE;
+            }
+            break;
+
+        case SHARING:
+            // Check if the reverse stills active
+            if (reverse_GetState()) {
+                // Share the distance just one time
+                if (!distance_msg_flag) {
+                    distance_msg_flag = true;
+                    distance_processed = parking_ProcessData();
+
+                    // Generate a string with the distance and send it to the UART
+                    sprintf(distance_dbg_msg, "%u \r\n", distance_processed);
+                    uart_SendStringSize((uint8_t *) distance_dbg_msg, strlen(distance_dbg_msg));
+
+                    // Generate a string with full (0xFF) and empty (0x00) characters and send it to the display
+                    parking_GenerateLevel(distance_msg, distance_processed);
+                    display_Clear();
+                    display_PrintStringInTopLine((uint8_t *) distance_msg);
+                    display_PrintStringInBottomLine((uint8_t *) distance_msg);
+
+                    // Turn on the display just if it's off
+                    if (!display_GetState()) {
+                        display_TurnOn();
+                    }
+                }
+
+                // Non-blocking delay of DISPLAYING_DATA_DELAY_DURATION_MS and then take a new measurement
+                if (delayRead(&displaying_data_delay))
+                    parkingSensor_State = MEASURING;
+            } else {
+                parkingSensor_State = IDLE;
+            }
+            break;
+
+        default:
+            Error_Handler();
+            break;
+    }
+}
+
+/**
+ * @brief Callback after the distance has been measured
+ * @param uint16_t The distance measured
+ * @retval void
+*/
+void hcsr04_IRQ_Callback(uint16_t distance)
+{
+    last_distance = distance;
+    distance_msg_flag = false;
+    parkingSensor_State = SHARING;
+}
+
+/**
+ * @brief Process the distance data to obtain the acording resolution level (0-8)
+ * @param void
+ * @retval uint8_t A resolution level
+*/
+uint8_t parking_ProcessData()
+{
+    if (last_distance > hcsr04_MAX_DISTANCE) {
+        return MIN_RESOLUTION_LEVEL;
+    }
+
+    // Calculate the acording resolution level based on the value measured
+    for (int i = 1; i <= (MAX_RESOLUTION_LEVEL+1); i++) {
+        if (last_distance >= (hcsr04_MAX_DISTANCE - (i * STEP_RESOLUTION_LEVEL))) {
+            return i - 1;
+        }
+    }
+
+    return MAX_RESOLUTION_LEVEL;
+}
+
+/**
+ * @brief Use the resolution_level to set a string bar with full (0xFF) and empty (0x00) characters
+ * @param char* The string to fill
+ * @param int The resolution_level
+ * @retval void
+*/
+void parking_GenerateLevel(char * st, int resolution_level) {
+    if (st == NULL || resolution_level < MIN_RESOLUTION_LEVEL || resolution_level > (MAX_RESOLUTION_LEVEL+1)) {
+        Error_Handler();
+        return;
+    }
+
+    // Set the string to 0
+    memset(st, 0, sizeof(distance_msg));
+
+    if (resolution_level == MIN_RESOLUTION_LEVEL) {
+        return;
+    }
+
+    for (int i = 0; i < resolution_level*2; i = i+2) {
+        st[i] = CHARACTER_FULL;
+        st[i+1] = CHARACTER_FULL;
+    }
+}
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+    /** Configure the main internal regulator output voltage
+     */
+    __HAL_RCC_PWR_CLK_ENABLE();
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+    /** Initializes the RCC Oscillators according to the specified parameters
+     * in the RCC_OscInitTypeDef structure.
+     */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = 4;
+    RCC_OscInitStruct.PLL.PLLN = 168;
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    RCC_OscInitStruct.PLL.PLLQ = 7;
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    /** Initializes the CPU, AHB and APB buses clocks
+     */
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                                |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
+/**
+ * @brief  This function is executed in case of error occurrence.
+ * @param  None
+ * @retval None
+ */
+static void Error_Handler(void)
+{
+    /* Turn LED2 on */
+    BSP_LED_On(LED2);
+    __disable_irq();
+    while (1);
+}
+
+#ifdef  USE_FULL_ASSERT
+/**
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+    /* User can add his own implementation to report the file name and line number,
+    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+    /* Infinite loop */
+    while (1);
+}
+#endif

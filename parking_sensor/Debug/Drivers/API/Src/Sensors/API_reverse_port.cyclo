@@ -1,0 +1,2 @@
+../Drivers/API/Src/Sensors/API_reverse_port.c:19:6:myReverseGPIO_Init	1
+../Drivers/API/Src/Sensors/API_reverse_port.c:34:6:myReverseGPIO_DeInit	1

@@ -1,0 +1,4 @@
+../Drivers/API/Src/API_leds.c:31:6:BSP_LED_Init	2
+../Drivers/API/Src/API_leds.c:56:6:BSP_LED_On	1
+../Drivers/API/Src/API_leds.c:68:6:BSP_LED_Off	1
+../Drivers/API/Src/API_leds.c:80:6:BSP_LED_Toggle	1

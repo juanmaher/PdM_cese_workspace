@@ -1,0 +1,13 @@
+../Drivers/API/Src/API_lcd.c:34:7:Init_Lcd	3
+../Drivers/API/Src/API_lcd.c:60:13:DelayLcd	1
+../Drivers/API/Src/API_lcd.c:74:13:ControlLcd	1
+../Drivers/API/Src/API_lcd.c:88:6:DatoLcd	1
+../Drivers/API/Src/API_lcd.c:101:6:DatoAsciiLcd	1
+../Drivers/API/Src/API_lcd.c:114:6:DatoBCD	1
+../Drivers/API/Src/API_lcd.c:131:6:Envia8bitsLcd	1
+../Drivers/API/Src/API_lcd.c:146:13:Envia4bitsLcd	1
+../Drivers/API/Src/API_lcd.c:171:6:SacaTextoLcd	2
+../Drivers/API/Src/API_lcd.c:201:6:PosCaracHLcd	1
+../Drivers/API/Src/API_lcd.c:215:6:PosCaracLLcd	1
+../Drivers/API/Src/API_lcd.c:228:6:CursorOffLcd	1
+../Drivers/API/Src/API_lcd.c:241:6:CursorOnLcd	1

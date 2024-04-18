@@ -1,0 +1,7 @@
+../Drivers/API/Src/API_buttons.c:33:13:BUTTON_USER_EXTI_Callback	1
+../Drivers/API/Src/API_buttons.c:42:13:BUTTON_USER_GPIO_Init	1
+../Drivers/API/Src/API_buttons.c:73:9:BSP_PB_Init	4
+../Drivers/API/Src/API_buttons.c:113:9:BSP_PB_DeInit	1
+../Drivers/API/Src/API_buttons.c:131:9:BSP_PB_GetState	1
+../Drivers/API/Src/API_buttons.c:140:6:BSP_PB_IRQHandler	1
+../Drivers/API/Src/API_buttons.c:150:13:BSP_PB_Callback	1

@@ -1,0 +1,3 @@
+../Drivers/API/Src/API_gpio.c:19:6:GPIO_Init	1
+../Drivers/API/Src/API_gpio.c:24:6:GPIO_Read	1
+../Drivers/API/Src/API_gpio.c:29:6:GPIO_Write	1

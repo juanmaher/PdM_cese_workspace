@@ -1,0 +1,8 @@
+../Drivers/API/Src/API_uart.c:39:6:HAL_UART_MspInit	2
+../Drivers/API/Src/API_uart.c:75:6:HAL_UART_MspDeInit	2
+../Drivers/API/Src/API_uart.c:98:22:myUART_Init	2
+../Drivers/API/Src/API_uart.c:118:16:calculateStringLength	3
+../Drivers/API/Src/API_uart.c:134:15:uart_Init	1
+../Drivers/API/Src/API_uart.c:140:15:uart_SendString	3
+../Drivers/API/Src/API_uart.c:148:15:uart_SendStringSize	4
+../Drivers/API/Src/API_uart.c:161:15:uart_ReceiveStringSize	4
