@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
- * @file    API_reverse.c
+ * @file    API_reverse_port.c
  * @author  Juan Manuel Hernández
- * @brief   Implementation of API_reverse
+ * @brief   Implementation of API_reverse_port
  ******************************************************************************
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "API_reverse.h"
+#include "API_reverse_port.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -16,7 +16,7 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* Public functions ----------------------------------------------------------*/
-reverse_Status_t reverse_Init()
+void myReverseGPIO_Init()
 {
     GPIO_InitTypeDef GPIO_InitStruct;
 
@@ -29,24 +29,12 @@ reverse_Status_t reverse_Init()
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
     HAL_GPIO_Init(REVERSE_GPIO_PORT, &GPIO_InitStruct);
-
-    debounceFSM_init();
-
-    return REVERSE_OK;
 }
 
-reverse_Status_t reverse_DeInit()
+void myReverseGPIO_DeInit()
 {
     GPIO_InitTypeDef gpio_init_structure;
 
     gpio_init_structure.Pin = REVERSE_PIN;
     HAL_GPIO_DeInit(REVERSE_GPIO_PORT, gpio_init_structure.Pin);
-
-    return REVERSE_OK;
-}
-
-uint32_t reverse_GetState()
-{
-    debounceFSM_update();
-    return readKey();
 }

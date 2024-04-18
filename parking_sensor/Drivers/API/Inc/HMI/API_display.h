@@ -15,13 +15,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include "stm32f4xx_hal.h"  		/* <- HAL include */
+#include "API_display_port.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef enum {
     DISPLAY_OK = 0,
     DISPLAY_ERROR_NULL,
-    DISPLAY_ERROR_HAL
+    DISPLAY_ERROR_PORT
 } display_Status_t;
 
 typedef enum {
@@ -38,6 +38,9 @@ typedef enum {
 #define LINE1_POSITION                      0x80
 #define LINE2_POSITION                      0xc0
 #define MAX_CHAR_PER_LINE                   16
+#define MAX_DELAY                           0xFFFFFFFFU
+#define CHARACTER_FULL                      0xFF
+#define CHARACTER_EMPTY                     0x0
 
 /* Instruction list */
 #define INSTR_CLR_DISPLAY                   (1 << 0) // Clear display
@@ -92,24 +95,6 @@ typedef enum {
 // Initialization
 #define CMD_INIT_1                          0x30
 #define CMD_INIT_2                          0x20
-
-/* I2C definition */
-#define I2Cx                                     I2C1
-#define I2Cx_CLK_ENABLE()                        __HAL_RCC_I2C1_CLK_ENABLE()
-
-#define I2Cx_SCL_AF                              GPIO_AF4_I2C1
-#define I2Cx_SCL_GPIO_PORT                       GPIOB
-#define I2Cx_SCL_PIN                             GPIO_PIN_8
-#define I2Cx_SCL_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOB_CLK_ENABLE()
-#define I2Cx_SCL_GPIO_CLK_DISABLE()              __HAL_RCC_GPIOB_CLK_DISABLE()
-
-#define I2Cx_SDA_AF                              GPIO_AF4_I2C1
-#define I2Cx_SDA_GPIO_PORT                       GPIOB
-#define I2Cx_SDA_PIN                             GPIO_PIN_9
-#define I2Cx_SDA_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOB_CLK_ENABLE()
-#define I2Cx_SDA_GPIO_CLK_DISABLE()              __HAL_RCC_GPIOB_CLK_DISABLE()
-
-#define I2C_CLOCK_RATE                          100000
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

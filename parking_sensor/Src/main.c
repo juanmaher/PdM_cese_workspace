@@ -18,8 +18,11 @@ typedef enum {
 } parkingSensor_State_t;
 
 /* Private define ------------------------------------------------------------*/
-#define WELCOME_DELAY_DURATION_MS               1000
-#define DISPLAYING_DATA_DELAY_DURATION_MS       1000
+#define WELCOME_DELAY_DURATION_MS                   1000
+#define DISPLAYING_DATA_DELAY_DURATION_MS           1000
+#define MIN_RESOLUTION_LEVEL                        0
+#define MAX_RESOLUTION_LEVEL                        7
+#define STEP_RESOLUTION_LEVEL                       (hcsr04_MAX_DISTANCE/(MAX_RESOLUTION_LEVEL+1)) // 6.25
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -30,8 +33,8 @@ static delay_t displaying_data_delay;
 static const char welcome_msg[] = "Parking Sensor";
 static bool welcome_msg_flag = false;
 
-static char distance_dbg_msg[16];
-static char distance_msg[16];
+static char distance_dbg_msg[MAX_CHAR_PER_LINE];
+static char distance_msg[MAX_CHAR_PER_LINE];
 static bool distance_msg_flag = false;
 
 static uint16_t last_distance = 0;
@@ -152,22 +155,22 @@ void hcsr04_IRQ_Callback(uint16_t distance)
 
 uint8_t parking_ProcessData()
 {
-    if (last_distance > 50) {
-        return 0;
+    if (last_distance > hcsr04_MAX_DISTANCE) {
+        return MIN_RESOLUTION_LEVEL;
     }
 
-    for (int i = 1; i <= 8; i++) {
-        if (last_distance >= (50 - (i * 6.25))) {
+    for (int i = 1; i <= (MAX_RESOLUTION_LEVEL+1); i++) {
+        if (last_distance >= (hcsr04_MAX_DISTANCE - (i * STEP_RESOLUTION_LEVEL))) {
             return i - 1;
         }
     }
 
-    return 7;
+    return MAX_RESOLUTION_LEVEL;
 }
 
 void parking_GenerateLevel(char * st, int nivel_resolucion)
 {
-    if (st == NULL || nivel_resolucion < 0 || nivel_resolucion > 8) {
+    if (st == NULL || nivel_resolucion < MIN_RESOLUTION_LEVEL || nivel_resolucion > (MAX_RESOLUTION_LEVEL+1)) {
         Error_Handler();
         return;
     }
@@ -178,8 +181,8 @@ void parking_GenerateLevel(char * st, int nivel_resolucion)
         return;
     }
 
-    for (int i = 0; i < nivel_resolucion*2+2; i++) {
-        st[i] = 0xFF;
+    for (int i = 0; i < (nivel_resolucion*2+2); i++) {
+        st[i] = CHARACTER_FULL;
     }
 }
 

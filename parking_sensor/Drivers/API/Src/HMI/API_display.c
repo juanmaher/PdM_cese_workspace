@@ -31,14 +31,12 @@ typedef enum {
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static I2C_HandleTypeDef hi2c1;
 static display_State_t display_state = TURN_OFF;
 /* Private function prototypes -----------------------------------------------*/
-static display_Status_t myI2Cx_Init();
 static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_type, bool bck_enable);
 
 /* Private function in macros */
-#define display_TransmitData(value)                         HAL_I2C_Master_Transmit(&hi2c1, DISPLAY_ADDR<<1, &value, sizeof(value), HAL_MAX_DELAY)
+#define display_TransmitData(value)                         myI2Cx_Master_Transmit(DISPLAY_ADDR<<1, &value, sizeof(value), MAX_DELAY)
 #define display_Send4bitsControlCmd(value, bck_enable)      display_Send4bitsCmd(value, RS_CONTROL, bck_enable)
 #define display_Send4bitsDataCmd(value)                     display_Send4bitsCmd(value, RS_DATA, true)
 #define display_Send8bitsControlCmd(value, bck_enable)      display_Send8bitsCmd(value, RS_CONTROL, bck_enable)
@@ -48,10 +46,10 @@ static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_
                                             if (x == NULL) { return DISPLAY_ERROR_NULL; } \
                                         } while(0U)
 
-#define CHECK_I2C(x)                    do { \
-                                            if (x != HAL_OK) { return DISPLAY_ERROR_HAL; } \
+#define CHECK_PORT(x)                   do { \
+                                            if (x != DISPLAY_PORT_OK) { return DISPLAY_ERROR_PORT; } \
                                         } while(0U)
-                                    
+
 #define CHECK_INTERNAL(x)               do { \
                                             if (x != DISPLAY_OK) { return x; } \
                                         } while(0U)
@@ -66,19 +64,19 @@ static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_
     // R (R/W) = read/write bit
     // T (RS) = data or control bit
     // DDDDEBRT
-    HAL_Delay(DELAY_1MS);
+    display_Delay(DELAY_1MS);
     if (bck_enable) {
         cmd = value | BIT_BACKLIGHT | BIT_ENABLE | rs_type;
-        CHECK_I2C(display_TransmitData(cmd));
-        HAL_Delay(DELAY_1MS);
+        CHECK_PORT(display_TransmitData(cmd));
+        display_Delay(DELAY_1MS);
         cmd = value | BIT_BACKLIGHT | rs_type;
-        CHECK_I2C(display_TransmitData(cmd));
+        CHECK_PORT(display_TransmitData(cmd));
     } else {
         cmd = value | BIT_ENABLE | rs_type;
-        CHECK_I2C(display_TransmitData(cmd));
-        HAL_Delay(DELAY_1MS);
+        CHECK_PORT(display_TransmitData(cmd));
+        display_Delay(DELAY_1MS);
         cmd = value | rs_type;
-        CHECK_I2C(display_TransmitData(cmd));
+        CHECK_PORT(display_TransmitData(cmd));
     }
 
     return DISPLAY_OK;
@@ -94,60 +92,21 @@ static display_Status_t display_Send8bitsCmd(uint8_t value, display_RsType_t rs_
     return DISPLAY_OK;
 }
 
-void HAL_I2C_MspInit(I2C_HandleTypeDef *hi2c)
-{
-    GPIO_InitTypeDef  GPIO_InitStruct;
 
-    /*** Configure the GPIOs ***/
-    /* Enable GPIO clock */
-    I2Cx_SCL_GPIO_CLK_ENABLE();
-    I2Cx_SDA_GPIO_CLK_ENABLE();
-
-    /*** Configure the I2C peripheral ***/
-    GPIO_InitStruct.Pin = I2Cx_SCL_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = I2Cx_SCL_AF;
-    HAL_GPIO_Init(I2Cx_SCL_GPIO_PORT, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = I2Cx_SDA_PIN;
-    HAL_GPIO_Init(I2Cx_SDA_GPIO_PORT, &GPIO_InitStruct);
-
-    /* Enable I2C clock */
-    I2Cx_CLK_ENABLE();
-}
-
-static display_Status_t myI2Cx_Init()
-{
-    hi2c1.Instance = I2Cx;
-    hi2c1.Init.ClockSpeed = I2C_CLOCK_RATE;
-    hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-    hi2c1.Init.OwnAddress1 = 0;
-    hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-    hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-    hi2c1.Init.OwnAddress2 = 0;
-    hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-    hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-
-    CHECK_I2C(HAL_I2C_Init(&hi2c1));
-
-    return DISPLAY_OK;
-}
 
 /* Public functions ----------------------------------------------------------*/
 display_Status_t display_Init()
 {
-    CHECK_INTERNAL(myI2Cx_Init());
+    CHECK_PORT(myI2Cx_Init());
 
     // Initialization sequence recommended by the datasheet
-    HAL_Delay(DELAY_20MS);
+    display_Delay(DELAY_20MS);
     // 0x3c - 0x38
     CHECK_INTERNAL(display_Send4bitsControlCmd(CMD_INIT_1, false));
-    HAL_Delay(DELAY_10MS);
+    display_Delay(DELAY_10MS);
     // 0x3c - 0x38
     CHECK_INTERNAL(display_Send4bitsControlCmd(CMD_INIT_1, false));
-    HAL_Delay(DELAY_1MS);
+    display_Delay(DELAY_1MS);
     // 0x3c - 0x38
     CHECK_INTERNAL(display_Send4bitsControlCmd(CMD_INIT_1, false));
     // 0x2c - 0x28
@@ -166,7 +125,7 @@ display_Status_t display_Init()
 display_Status_t display_Clear()
 {
     CHECK_INTERNAL(display_Send8bitsControlCmd(INSTR_CLR_DISPLAY, true));
-    HAL_Delay(DELAY_2MS);
+    display_Delay(DELAY_2MS);
     return DISPLAY_OK;
 }
 

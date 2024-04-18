@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include "stm32f4xx_hal.h"
+#include "API_hcsr04_port.h"
 
 typedef bool bool_t;
 
@@ -23,29 +23,21 @@ typedef bool bool_t;
 typedef enum {
     HCSR04_OK,
     HCSR04_ERROR_NULL,
-    HCSR04_ERROR_HAL,
+    HCSR04_ERROR_PORT
 } hcsr04_Status_t;
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+#define hcsr04_CONVERSION_FACTOR                            0.034
+#define hcsr04_MIN_DISTANCE                                 0
+#define hcsr04_MAX_DISTANCE                                 50
+
 /* Exported macro ------------------------------------------------------------*/
-#define hcsr04_TIMER                                    TIM1
-
-#define hcsr04_ECHO_PIN                                 GPIO_PIN_9
-#define hcsr04_ECHO_GPIO_PORT                           GPIOE
-#define hcsr04_ECHO_GPIO_CLK_ENABLE()                   __HAL_RCC_GPIOE_CLK_ENABLE()
-#define hcsr04_ECHO_GPIO_CLK_DISABLE()                  __HAL_RCC_GPIOE_CLK_DISABLE()
-
-#define hcsr04_TRIG_PIN                                 GPIO_PIN_2
-#define hcsr04_TRIG_GPIO_PORT                           GPIOE
-#define hcsr04_TRIG_GPIO_CLK_ENABLE()                   __HAL_RCC_GPIOE_CLK_ENABLE()
-#define hcsr04_TRIG_GPIO_CLK_DISABLE()                  __HAL_RCC_GPIOE_CLK_DISABLE()
-
-#define hcsr04_TRIG_SOURCE                              TIM_TS_TI1FP1
 /* Exported functions ------------------------------------------------------- */
 hcsr04_Status_t hcsr04_Init();
 hcsr04_Status_t hcsr04_StartMeasure();
 bool hcsr04_GetStatusMeasuring();
 void hcsr04_IRQ_Callback(uint16_t distance);
+void hcsr04_ICCaptureCallback();
 
 #endif /* __API_HCSR04_H */

@@ -22,7 +22,10 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
-Drivers/API/Src \
+Drivers/API/Src/Communication \
+Drivers/API/Src/HMI \
+Drivers/API/Src/Misc \
+Drivers/API/Src/Sensors \
 Drivers/BSP/STM32F4xx_Nucleo_144 \
 Drivers/CMSIS \
 Drivers/Core/Src \

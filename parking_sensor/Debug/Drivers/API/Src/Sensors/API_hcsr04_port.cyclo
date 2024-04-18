@@ -1,0 +1,15 @@
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:25:6:HAL_TIM_IC_CaptureCallback	2
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:35:6:TIM1_CC_IRQHandler	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:46:6:HAL_TIM_IC_MspInit	2
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:70:10:myTIM_ReadCapturedValue	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:75:6:myTIM_SetCapturePolarityFalling	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:80:6:myTIM_SetCapturePolarityRising	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:85:6:myTIM_ResetCounter	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:90:6:myTIM_StartIT	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:95:6:myTIM_DisableIT	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:100:6:myTIM_EnableIT	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:105:6:hcsr04_Delay	2
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:111:21:myHcsr04GPIO_Init	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:130:6:myHcsr04GPIO_SetTrig	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:135:6:myHcsr04GPIO_ResetTrig	1
+../Drivers/API/Src/Sensors/API_hcsr04_port.c:140:21:myTIM_Init	4

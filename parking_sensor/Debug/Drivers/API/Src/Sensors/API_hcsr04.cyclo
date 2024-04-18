@@ -1,0 +1,5 @@
+../Drivers/API/Src/Sensors/API_hcsr04.c:36:6:hcsr04_ICCaptureCallback	5
+../Drivers/API/Src/Sensors/API_hcsr04.c:68:17:hcsr04_Init	3
+../Drivers/API/Src/Sensors/API_hcsr04.c:77:17:hcsr04_StartMeasure	2
+../Drivers/API/Src/Sensors/API_hcsr04.c:91:6:hcsr04_GetStatusMeasuring	1
+../Drivers/API/Src/Sensors/API_hcsr04.c:96:13:hcsr04_IRQ_Callback	1

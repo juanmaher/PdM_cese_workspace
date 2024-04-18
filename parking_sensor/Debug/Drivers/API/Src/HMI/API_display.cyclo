@@ -1,0 +1,10 @@
+../Drivers/API/Src/HMI/API_display.c:58:25:display_Send4bitsCmd	6
+../Drivers/API/Src/HMI/API_display.c:85:25:display_Send8bitsCmd	3
+../Drivers/API/Src/HMI/API_display.c:98:18:display_Init	11
+../Drivers/API/Src/HMI/API_display.c:125:18:display_Clear	2
+../Drivers/API/Src/HMI/API_display.c:132:18:display_PrintChar	2
+../Drivers/API/Src/HMI/API_display.c:138:18:display_PrintStringInTopLine	6
+../Drivers/API/Src/HMI/API_display.c:151:18:display_PrintStringInBottomLine	6
+../Drivers/API/Src/HMI/API_display.c:164:18:display_TurnOn	2
+../Drivers/API/Src/HMI/API_display.c:171:18:display_TurnOff	2
+../Drivers/API/Src/HMI/API_display.c:178:17:display_GetState	1
