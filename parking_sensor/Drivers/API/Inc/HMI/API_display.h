@@ -98,13 +98,55 @@ typedef enum {
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+/**
+ * @brief Initializes the display
+ * @retval display_Status_t status
+*/
 display_Status_t display_Init();
+
+/**
+ * @brief Clear the content of the display
+ * @retval display_Status_t status
+*/
 display_Status_t display_Clear();
+
+/**
+ * @brief Prints a character
+ * @param[in] ch character to be printed
+ * @retval display_Status_t status
+*/
 display_Status_t display_PrintChar(uint8_t ch);
+
+/**
+ * @brief Prints a string in the top line
+ * @param[in] buf string to be printed
+ * @retval display_Status_t status
+*/
 display_Status_t display_PrintStringInTopLine(uint8_t * buf);
+
+/**
+ * @brief Prints a string in the bottom line
+ * @param[in] buf string to be printed
+ * @retval display_Status_t status
+*/
 display_Status_t display_PrintStringInBottomLine(uint8_t * buf);
+
+/**
+ * @brief Turns on the display
+ * @retval display_Status_t status
+*/
 display_Status_t display_TurnOn();
+
+/**
+ * @brief Turns off the display
+ * @retval display_Status_t status
+*/
 display_Status_t display_TurnOff();
+
+/**
+ * @brief Gets the display state
+ * @retval display_State_t state
+*/
 display_State_t display_GetState();
 
 #endif /* __API_DISPLAY_H */

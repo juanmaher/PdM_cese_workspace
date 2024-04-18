@@ -55,15 +55,25 @@ static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_
                                         } while(0U)
 
 /* Private functions ---------------------------------------------------------*/
+/**
+ * @brief  Sends a command of 4 bits to the display
+ * @param  value Value of the command
+ * @param  rs_type Determinates if the command is for data or control
+ * @param  bck_enable Determinates if the backlight is ON or OFF
+ * @retval display_Status_t status
+*/
 static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_type, bool bck_enable)
 {
     uint8_t cmd = 0;
-    // D = bit de datos
-    // E = enable bit
-    // B = enable backlight bit
-    // R (R/W) = read/write bit
-    // T (RS) = data or control bit
-    // DDDDEBRT
+
+    /* The cmd sent via I2C to the Display has to have the following format DDDDDEBRT.
+        - D = data bit
+        - E = enable bit
+        - B = enable backlight bit
+        - R (R/W) = read/write bit
+        - T (RS) = data or control bit
+    Between trasnmitions it is recommended by the datasheet to wait 1ms
+    */
     display_Delay(DELAY_1MS);
     if (bck_enable) {
         cmd = value | BIT_BACKLIGHT | BIT_ENABLE | rs_type;
@@ -82,17 +92,24 @@ static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_
     return DISPLAY_OK;
 }
 
+/**
+ * @brief Sends a command of 8 bits to the display
+ * @param  value Value of the command
+ * @param  rs_type Determinates if the command is for data or control
+ * @param  bck_enable Determinates if the backlight is ON or OFF
+ * @retval display_Status_t status
+*/
 static display_Status_t display_Send8bitsCmd(uint8_t value, display_RsType_t rs_type, bool bck_enable)
 {
     uint8_t cmd = 0;
+
+    /* The display is set to 4 bits mode and 8 bits commands has to be sent in two steps */
     cmd = value & HIGH_NIBBLE_MASK;
     CHECK_INTERNAL(display_Send4bitsCmd(cmd, rs_type, bck_enable));
     cmd = value << HIGH_NIBBLE_SHIFT;
     CHECK_INTERNAL(display_Send4bitsCmd(cmd, rs_type, bck_enable));
     return DISPLAY_OK;
 }
-
-
 
 /* Public functions ----------------------------------------------------------*/
 display_Status_t display_Init()
@@ -101,15 +118,13 @@ display_Status_t display_Init()
 
     // Initialization sequence recommended by the datasheet
     display_Delay(DELAY_20MS);
-    // 0x3c - 0x38
     CHECK_INTERNAL(display_Send4bitsControlCmd(CMD_INIT_1, false));
+
     display_Delay(DELAY_10MS);
-    // 0x3c - 0x38
     CHECK_INTERNAL(display_Send4bitsControlCmd(CMD_INIT_1, false));
+
     display_Delay(DELAY_1MS);
-    // 0x3c - 0x38
     CHECK_INTERNAL(display_Send4bitsControlCmd(CMD_INIT_1, false));
-    // 0x2c - 0x28
     CHECK_INTERNAL(display_Send4bitsControlCmd(CMD_INIT_2, false));
 
     // Custom settings

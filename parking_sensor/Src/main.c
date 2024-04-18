@@ -10,11 +10,11 @@
 
 /* Private typedef -----------------------------------------------------------*/
 typedef enum {
-    CONFIGURATION,
-    WELCOME,
-    IDLE,
-    MEASURING,
-    SHARING
+    CONFIGURATION, // Configures the modules
+    WELCOME, // Displays the welcome message
+    IDLE, // Represents a low enegy state
+    MEASURING, // Starts measuring the distance
+    SHARING // Shars the data to the outside
 } parkingSensor_State_t;
 
 /* Private define ------------------------------------------------------------*/
@@ -22,6 +22,7 @@ typedef enum {
 #define DISPLAYING_DATA_DELAY_DURATION_MS           1000
 #define MIN_RESOLUTION_LEVEL                        0
 #define MAX_RESOLUTION_LEVEL                        8
+// Constant that divides the maximum distance by the number of resolution levels
 #define STEP_RESOLUTION_LEVEL                       (hcsr04_MAX_DISTANCE/(MAX_RESOLUTION_LEVEL+1)) // 6.25
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,6 +52,7 @@ void parking_GenerateLevel(char * st, int nivel_resolucion);
 /* Private user code ---------------------------------------------------------*/
 /**
   * @brief  The application entry point.
+  * @param void
   * @retval int
   */
 int main(void)
@@ -62,11 +64,17 @@ int main(void)
 
     /* Infinite loop */
     while (1) {
+        /* Update the global state machine */
         parkingSensor_UpdateFSM();
         HAL_Delay(100);
     }
 }
 
+/**
+ * @brief Update the state machine of the parking sensor
+ * @param void
+ * @retval void
+*/
 static void parkingSensor_UpdateFSM()
 {
     switch (parkingSensor_State) {
@@ -89,53 +97,69 @@ static void parkingSensor_UpdateFSM()
             break;
 
         case WELCOME:
+            // Display the welcome message just one time
             if (!welcome_msg_flag) {
                 welcome_msg_flag = true;
                 display_Clear();
                 display_PrintStringInTopLine((uint8_t *) welcome_msg);
                 display_TurnOn();
             }
-            
+
+            // Non-blocking delay of WELCOME_DELAY_DURATION_MS and then transitionate to IDLE
             if (delayRead(&welcome_delay)) {
-                display_TurnOff();
                 parkingSensor_State = IDLE;
             }
             break;
 
         case IDLE:
-            if (reverse_GetState())
+            // Check if the reverse stills disactive
+            if (!reverse_GetState()) {
+                if (display_GetState()) {
+                    display_TurnOff();
+                }
+            } else {
                 parkingSensor_State = MEASURING;
+            }
             break;
 
         case MEASURING:
+            // Check if the reverse stills active
             if (reverse_GetState()) {
                 if (!hcsr04_GetStatusMeasuring())
                     hcsr04_StartMeasure();
             } else {
-                display_TurnOff();
                 parkingSensor_State = IDLE;
             }
             break;
 
         case SHARING:
+            // Check if the reverse stills active
             if (reverse_GetState()) {
+                // Share the distance just one time
                 if (!distance_msg_flag) {
                     distance_msg_flag = true;
                     distance_processed = parking_ProcessData();
+
+                    // Generate a string with the distance and send it to the UART
                     sprintf(distance_dbg_msg, "%u \r\n", distance_processed);
                     uart_SendStringSize((uint8_t *) distance_dbg_msg, strlen(distance_dbg_msg));
+
+                    // Generate a string with full (0xFF) and empty (0x00) characters and send it to the display
                     parking_GenerateLevel(distance_msg, distance_processed);
                     display_Clear();
                     display_PrintStringInTopLine((uint8_t *) distance_msg);
                     display_PrintStringInBottomLine((uint8_t *) distance_msg);
+
+                    // Turn on the display just if it's off
                     if (!display_GetState()) {
                         display_TurnOn();
                     }
                 }
+
+                // Non-blocking delay of DISPLAYING_DATA_DELAY_DURATION_MS and then take a new measurement
                 if (delayRead(&displaying_data_delay))
                     parkingSensor_State = MEASURING;
             } else {
-                display_TurnOff();
                 parkingSensor_State = IDLE;
             }
             break;
@@ -146,6 +170,11 @@ static void parkingSensor_UpdateFSM()
     }
 }
 
+/**
+ * @brief Callback after the distance has been measured
+ * @param uint16_t The distance measured
+ * @retval void
+*/
 void hcsr04_IRQ_Callback(uint16_t distance)
 {
     last_distance = distance;
@@ -153,12 +182,18 @@ void hcsr04_IRQ_Callback(uint16_t distance)
     parkingSensor_State = SHARING;
 }
 
+/**
+ * @brief Process the distance data to obtain the acording resolution level (0-8)
+ * @param void
+ * @retval uint8_t A resolution level
+*/
 uint8_t parking_ProcessData()
 {
     if (last_distance > hcsr04_MAX_DISTANCE) {
         return MIN_RESOLUTION_LEVEL;
     }
 
+    // Calculate the acording resolution level based on the value measured
     for (int i = 1; i <= (MAX_RESOLUTION_LEVEL+1); i++) {
         if (last_distance >= (hcsr04_MAX_DISTANCE - (i * STEP_RESOLUTION_LEVEL))) {
             return i - 1;
@@ -168,15 +203,22 @@ uint8_t parking_ProcessData()
     return MAX_RESOLUTION_LEVEL;
 }
 
+/**
+ * @brief Use the resolution_level to set a string bar with full (0xFF) and empty (0x00) characters
+ * @param char* The string to fill
+ * @param int The resolution_level
+ * @retval void
+*/
 void parking_GenerateLevel(char * st, int resolution_level) {
     if (st == NULL || resolution_level < MIN_RESOLUTION_LEVEL || resolution_level > (MAX_RESOLUTION_LEVEL+1)) {
         Error_Handler();
         return;
     }
 
+    // Set the string to 0
     memset(st, 0, sizeof(distance_msg));
 
-    if (resolution_level == 0) {
+    if (resolution_level == MIN_RESOLUTION_LEVEL) {
         return;
     }
 
