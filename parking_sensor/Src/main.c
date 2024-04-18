@@ -21,7 +21,7 @@ typedef enum {
 #define WELCOME_DELAY_DURATION_MS                   1000
 #define DISPLAYING_DATA_DELAY_DURATION_MS           1000
 #define MIN_RESOLUTION_LEVEL                        0
-#define MAX_RESOLUTION_LEVEL                        7
+#define MAX_RESOLUTION_LEVEL                        8
 #define STEP_RESOLUTION_LEVEL                       (hcsr04_MAX_DISTANCE/(MAX_RESOLUTION_LEVEL+1)) // 6.25
 
 /* Private macro -------------------------------------------------------------*/
@@ -168,21 +168,21 @@ uint8_t parking_ProcessData()
     return MAX_RESOLUTION_LEVEL;
 }
 
-void parking_GenerateLevel(char * st, int nivel_resolucion)
-{
-    if (st == NULL || nivel_resolucion < MIN_RESOLUTION_LEVEL || nivel_resolucion > (MAX_RESOLUTION_LEVEL+1)) {
+void parking_GenerateLevel(char * st, int resolution_level) {
+    if (st == NULL || resolution_level < MIN_RESOLUTION_LEVEL || resolution_level > (MAX_RESOLUTION_LEVEL+1)) {
         Error_Handler();
         return;
     }
 
     memset(st, 0, sizeof(distance_msg));
 
-    if (nivel_resolucion == 0) {
+    if (resolution_level == 0) {
         return;
     }
 
-    for (int i = 0; i < (nivel_resolucion*2+2); i++) {
+    for (int i = 0; i < resolution_level*2; i = i+2) {
         st[i] = CHARACTER_FULL;
+        st[i+1] = CHARACTER_FULL;
     }
 }
 
