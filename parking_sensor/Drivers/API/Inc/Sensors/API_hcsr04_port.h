@@ -39,8 +39,8 @@ typedef enum {
 #define hcsr04_IRQn                                     TIM1_CC_IRQn
 
 // SystemClock Freq 180 MHz
-#define hcsr04_PREESCALER_180MHz                        168-1
-#define hcsr04_PERIOD_180MHz                            0xffff-1
+#define hcsr04_PREESCALER_180MHz                        180         // 1 us pulses
+#define hcsr04_PERIOD_180MHz                            0xFFFF
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

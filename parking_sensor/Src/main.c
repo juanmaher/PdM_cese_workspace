@@ -210,7 +210,7 @@ uint8_t parking_ProcessData()
  * @retval void
 */
 void parking_GenerateLevel(char * st, int resolution_level) {
-    if (st == NULL || resolution_level < MIN_RESOLUTION_LEVEL || resolution_level > (MAX_RESOLUTION_LEVEL+1)) {
+    if (st == NULL || resolution_level < MIN_RESOLUTION_LEVEL || resolution_level > MAX_RESOLUTION_LEVEL) {
         Error_Handler();
         return;
     }

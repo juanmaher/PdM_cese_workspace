@@ -43,11 +43,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  19 .debug_line   0001a59a  00000000  00000000  0005d5ef  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_str    000ece42  00000000  00000000  00077b89  2**0
+ 20 .debug_str    000ece3e  00000000  00000000  00077b89  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_frame  00004c18  00000000  00000000  001649cc  2**2
+ 21 .debug_frame  00004c18  00000000  00000000  001649c8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line_str 0000007d  00000000  00000000  001695e4  2**0
+ 22 .debug_line_str 0000007d  00000000  00000000  001695e0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2719,7 +2719,7 @@ void hcsr04_ICCaptureCallback()
  8001794:	681b      	ldr	r3, [r3, #0]
  8001796:	1ad3      	subs	r3, r2, r3
  8001798:	f503 437f 	add.w	r3, r3, #65280	; 0xff00
- 800179c:	33fe      	adds	r3, #254	; 0xfe
+ 800179c:	33ff      	adds	r3, #255	; 0xff
  800179e:	607b      	str	r3, [r7, #4]
         distance = difference * hcsr04_CONVERSION_FACTOR/2;
  80017a0:	6878      	ldr	r0, [r7, #4]
@@ -3222,7 +3222,7 @@ hcsr04Port_Status_t myTIM_Init()
  8001acc:	601a      	str	r2, [r3, #0]
     htim1.Init.Prescaler = hcsr04_PREESCALER_180MHz;
  8001ace:	4b21      	ldr	r3, [pc, #132]	; (8001b54 <myTIM_Init+0xa8>)
- 8001ad0:	22a7      	movs	r2, #167	; 0xa7
+ 8001ad0:	22b4      	movs	r2, #180	; 0xb4
  8001ad2:	605a      	str	r2, [r3, #4]
     htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
  8001ad4:	4b1f      	ldr	r3, [pc, #124]	; (8001b54 <myTIM_Init+0xa8>)
@@ -3230,7 +3230,7 @@ hcsr04Port_Status_t myTIM_Init()
  8001ad8:	609a      	str	r2, [r3, #8]
     htim1.Init.Period = hcsr04_PERIOD_180MHz;
  8001ada:	4b1e      	ldr	r3, [pc, #120]	; (8001b54 <myTIM_Init+0xa8>)
- 8001adc:	f64f 72fe 	movw	r2, #65534	; 0xfffe
+ 8001adc:	f64f 72ff 	movw	r2, #65535	; 0xffff
  8001ae0:	60da      	str	r2, [r3, #12]
     htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
  8001ae2:	4b1c      	ldr	r3, [pc, #112]	; (8001b54 <myTIM_Init+0xa8>)
@@ -11475,7 +11475,7 @@ void parking_GenerateLevel(char * st, int resolution_level) {
  8004c40:	af00      	add	r7, sp, #0
  8004c42:	6078      	str	r0, [r7, #4]
  8004c44:	6039      	str	r1, [r7, #0]
-    if (st == NULL || resolution_level < MIN_RESOLUTION_LEVEL || resolution_level > (MAX_RESOLUTION_LEVEL+1)) {
+    if (st == NULL || resolution_level < MIN_RESOLUTION_LEVEL || resolution_level > MAX_RESOLUTION_LEVEL) {
  8004c46:	687b      	ldr	r3, [r7, #4]
  8004c48:	2b00      	cmp	r3, #0
  8004c4a:	d005      	beq.n	8004c58 <parking_GenerateLevel+0x1c>
@@ -11483,7 +11483,7 @@ void parking_GenerateLevel(char * st, int resolution_level) {
  8004c4e:	2b00      	cmp	r3, #0
  8004c50:	db02      	blt.n	8004c58 <parking_GenerateLevel+0x1c>
  8004c52:	683b      	ldr	r3, [r7, #0]
- 8004c54:	2b09      	cmp	r3, #9
+ 8004c54:	2b08      	cmp	r3, #8
  8004c56:	dd02      	ble.n	8004c5e <parking_GenerateLevel+0x22>
         Error_Handler();
  8004c58:	f000 f88e 	bl	8004d78 <Error_Handler>
