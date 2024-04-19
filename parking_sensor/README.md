@@ -26,3 +26,9 @@ Se separó en módulos de acuerdo a funcionalidades comunes.
 - Sensado de señales externas (ultrasónico y reversa).
 
 Los drivers del display, ultrasónico y reversa fueron planteados de forma genérica para no tener dependencias con el hardware. Se implementó una capa de aplicación y una capa de bajo nivel (port.c). En caso de querer portar algun driver de los mencionados, se deberá modificar los archivos port.
+
+## Presentacion
+[Presentación](docs/TP%20Final%20-%20Sensor%20de%20estacionamiento.pdf)
+
+## Video demostrativo
+[Link al video demostrativo](https://drive.google.com/file/d/1kpjmVj-tzo7kiJs-pOcB94lYorYwudE8/view)
