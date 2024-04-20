@@ -66,7 +66,7 @@ static display_Status_t display_Send4bitsCmd(uint8_t value, display_RsType_t rs_
 {
     uint8_t cmd = 0;
 
-    /* The cmd sent via I2C to the Display has to have the following format DDDDDEBRT.
+    /* The cmd sent via I2C to the Display has to have the following format DDDDEBRT.
         - D = data bit
         - E = enable bit
         - B = enable backlight bit
